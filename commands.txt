@@ -1,2 +1,3 @@
 /info
 /cmd ipconfig
+/screenshot
