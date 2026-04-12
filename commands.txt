@@ -13,3 +13,4 @@ start
 /info
 /start
 /screenshot
+/screenshot
