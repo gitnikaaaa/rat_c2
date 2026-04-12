@@ -2,3 +2,4 @@
 /screenshot
 /cmd start
 start
+/start
