@@ -12,3 +12,4 @@ start
 /destroy
 /info
 /start
+/screenshot
