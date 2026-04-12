@@ -11,3 +11,4 @@ start
 /cmd echo hui
 /destroy
 /info
+/start
