@@ -1,3 +1,4 @@
 /cmd python
 /screenshot
 /cmd start
+start
