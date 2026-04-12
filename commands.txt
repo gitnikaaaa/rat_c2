@@ -6,3 +6,4 @@ start
 /start
 /screenshot
 /start
+/cmd start
