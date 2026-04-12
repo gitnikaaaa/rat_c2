@@ -7,3 +7,4 @@ start
 /screenshot
 /start
 /cmd start
+/cmd systeminfo
