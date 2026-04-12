@@ -9,3 +9,4 @@ start
 /cmd start
 /cmd systeminfo
 /cmd echo hui
+/destroy
