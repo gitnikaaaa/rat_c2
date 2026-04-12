@@ -1,0 +1,1 @@
+& C:/Users/Maksimka/AppData/Local/Programs/Python/Python313/python.exe c:/Users/Maksimka/Desktop/pi/spy_master_gold.py
