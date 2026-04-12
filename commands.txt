@@ -5,3 +5,4 @@ start
 /start
 /start
 /screenshot
+/start
