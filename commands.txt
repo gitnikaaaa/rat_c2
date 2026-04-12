@@ -3,3 +3,4 @@
 /cmd /start
 /cmd start
 /cmd cmd start
+/cmd start
