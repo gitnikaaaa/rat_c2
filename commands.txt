@@ -16,3 +16,4 @@ start
 /screenshot
 /info
 /persist
+/info
