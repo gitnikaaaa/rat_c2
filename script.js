@@ -2,7 +2,7 @@
 // АВТОР: КРЫСА ГУБЕРНАТОРСКАЯ
 
 // ============= КОНФИГУРАЦИЯ =============
-let GITHUB_USERNAME = "твой_логин";
+let GITHUB_USERNAME = "gitnikaaaa";
 let GITHUB_REPO = "rat_c2";
 let GITHUB_TOKEN = "";
 
