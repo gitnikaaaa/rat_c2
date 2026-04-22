@@ -8,24 +8,14 @@ on:
 jobs:
   run-bot:
     runs-on: ubuntu-latest
-    
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      
-      - name: Install dependencies
-        run: |
-          pip install requests
-      
-      - name: Run C2 Bot
+      - name: Install
+        run: pip install requests
+      - name: Run
         env:
           C2_TOKEN: ${{ secrets.C2_TOKEN }}
-          C2_USER: ${{ github.repository_owner }}
-          C2_REPO: ${{ github.event.repository.name }}
-        run: |
-          python c2_bot.py
+        run: python c2_bot.py
