@@ -1,3 +1,4 @@
 /cmd start
 /cmd taskkill cmd.exe
 /screenshot
+/screenshot
