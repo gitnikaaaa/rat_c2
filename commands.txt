@@ -1,1 +1,2 @@
 /cmd start
+/cmd start
