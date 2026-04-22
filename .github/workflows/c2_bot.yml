@@ -2,10 +2,8 @@ name: C2 BOT - Постоянный обработчик команд
 
 on:
   schedule:
-    # Запуск каждые 5 минут (можно настроить)
     - cron: '*/5 * * * *'
   workflow_dispatch:
-    # Ручной запуск из вкладки Actions
 
 jobs:
   run-bot:
@@ -26,8 +24,9 @@ jobs:
       
       - name: Запуск C2 бота
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_USER: ${{ github.repository_owner }}
-          GITHUB_REPO: ${{ github.event.repository.name }}
+          # ✅ ПРАВИЛЬНО - используем имя секрета без GITHUB_
+          C2_TOKEN: ${{ secrets.C2_TOKEN }}
+          C2_USER: ${{ github.repository_owner }}
+          C2_REPO: ${{ github.event.repository.name }}
         run: |
           python c2_bot.py
