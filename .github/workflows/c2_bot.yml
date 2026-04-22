@@ -1,4 +1,4 @@
-name: C2 BOT - Постоянный обработчик команд
+name: C2 BOT
 
 on:
   schedule:
@@ -10,21 +10,20 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout репозиторий
+      - name: Checkout
         uses: actions/checkout@v4
       
-      - name: Установка Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
       
-      - name: Установка зависимостей
+      - name: Install dependencies
         run: |
-          pip install requests PyGithub
+          pip install requests
       
-      - name: Запуск C2 бота
+      - name: Run C2 Bot
         env:
-          # ✅ ПРАВИЛЬНО - используем имя секрета без GITHUB_
           C2_TOKEN: ${{ secrets.C2_TOKEN }}
           C2_USER: ${{ github.repository_owner }}
           C2_REPO: ${{ github.event.repository.name }}
