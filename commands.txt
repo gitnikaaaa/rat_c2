@@ -1,1 +1,2 @@
 @DESKTOP-Q86CIH3 /cmd start
+@DESKTOP-Q86CIH3 /cmd start
