@@ -1497,7 +1497,7 @@
                 const response = await fetch(API_URL, { headers: HEADERS });
                 if (response.ok) {
                     const files = await response.json();
-                    const protectedFiles = ["index.html", "style.css", "script.js", "config.js", ".gitignore"];
+                    const protectedFiles = ["index.html", "style.css", "script.js", "config.js", ".gitignore", ".nojekyll"];
                     let deleted = 0;
                     for (const file of files) {
                         if (protectedFiles.includes(file.name)) continue;
