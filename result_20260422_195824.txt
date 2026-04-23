@@ -1,1 +1,0 @@
-/data/data/org.qpython.qpy3/files/bin/sh: //sdcards/Music: not found
