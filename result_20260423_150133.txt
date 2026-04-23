@@ -1,3 +1,0 @@
-[Connected] MODEL: Unknown
-ANDROID: Unknown
-TIME: 2026-04-23 15:01:33.797967
