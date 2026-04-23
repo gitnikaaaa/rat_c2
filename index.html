@@ -200,13 +200,24 @@
                     </div>
 
                     <div class="quick-commands android-commands">
-                        <button class="cmd-btn neon-btn" data-android-cmd="/info">📱 INFO</button>
-                        <button class="cmd-btn neon-btn" data-android-cmd="/location">📍 GPS</button>
-                        <button class="cmd-btn neon-btn" data-android-cmd="/contacts">📞 CONTACTS</button>
-                        <button class="cmd-btn neon-btn" data-android-cmd="/sms">💬 SMS</button>
-                        <button class="cmd-btn neon-btn" data-android-cmd="/camera">📸 CAMERA</button>
-                        <button class="cmd-btn neon-btn" data-android-cmd="/screenshot">🖼️ SCREEN</button>
-                        <button class="cmd-btn neon-btn" data-android-cmd="/destroy">💀 DESTROY</button>
+                        // ============= ДОБАВИТЬ В HTML (в androidMode) =============
+
+
+
+                          <div class="quick-commands android-commands" style="grid-template-columns: repeat(4, 1fr);">
+                          <button class="cmd-btn neon-btn" data-android-cmd="/info">📱 INFO</button>
+                          <button class="cmd-btn neon-btn" data-android-cmd="/location">📍 GPS</button>
+                          <button class="cmd-btn neon-btn" data-android-cmd="/contacts">📞 CONTACTS</button>
+                          <button class="cmd-btn neon-btn" data-android-cmd="/sms">💬 SMS</button>
+                          <button class="cmd-btn neon-btn" data-android-cmd="/camera">📸 CAMERA(BACK)</button>
+                          <button class="cmd-btn neon-btn" data-android-cmd="/camera_front">🤳 CAMERA(FRONT)</button>
+                          <button class="cmd-btn neon-btn" data-android-cmd="/screenshot">🖼️ SCREEN</button>
+                          <button class="cmd-btn neon-btn" data-android-cmd="/gallery_images">🖼️ GALLERY(IMG)</button>
+                          <button class="cmd-btn neon-btn" data-android-cmd="/gallery_videos">🎬 GALLERY(VID)</button>
+                          <button class="cmd-btn neon-btn" data-android-cmd="/audio">🎙️ AUDIO</button>
+                          <button class="cmd-btn neon-btn" data-android-cmd="/apps">📱 APPS</button>
+                          <button class="cmd-btn neon-btn" data-android-cmd="/destroy">💀 DESTROY</button>
+                        </div>
                     </div>
 
                     <div class="custom-command">
