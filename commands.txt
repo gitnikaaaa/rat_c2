@@ -1,2 +1,0 @@
-/camera_front
-/camera_front
