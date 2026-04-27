@@ -1,2 +1,3 @@
 /cmd
 /info
+@DESKTOP-Q86CIH3 | User: Maksimka /info
