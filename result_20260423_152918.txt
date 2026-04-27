@@ -1,1 +1,0 @@
-Camera error (camera_id=1): java.lang.RuntimeException: Fail to connect to camera service
