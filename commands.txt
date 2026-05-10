@@ -6,3 +6,4 @@
 /contacts
 /info
 /info
+/info
