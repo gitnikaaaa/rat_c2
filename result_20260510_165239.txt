@@ -1,0 +1,1 @@
+❌ SMS error: Permission Denial: reading com.android.providers.telephony.SmsProvider uri content://sms from pid=31255, uid=10410 requires android.permission.READ_SMS, or grantUriPermission()
