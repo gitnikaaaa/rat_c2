@@ -1,1 +1,0 @@
-❌ Audio error: /storage/emulated/0/audio_1778412129949.3gp: open failed: EPERM (Operation not permitted)
