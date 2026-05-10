@@ -1,1 +1,0 @@
-❌ Camera error: Fail to connect to camera service
