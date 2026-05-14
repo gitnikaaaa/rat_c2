@@ -1,1 +1,2 @@
 /sms_recent
+/sms_recent
