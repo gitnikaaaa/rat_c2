@@ -1,2 +1,0 @@
-/location
-/camera_front
