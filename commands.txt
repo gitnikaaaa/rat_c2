@@ -4,3 +4,4 @@
 /persist
 /persist
 /info
+/cash
