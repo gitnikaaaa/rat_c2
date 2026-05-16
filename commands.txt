@@ -3,3 +3,4 @@
 /info
 /persist
 /persist
+/info
