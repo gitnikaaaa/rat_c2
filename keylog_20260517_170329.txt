@@ -1,0 +1,91 @@
+[17:02:14] [📜 ЛОГИ]
+[17:02:14] [🖼️ ГАЛЕРЕЯ]
+[17:02:15] [📜 ЛОГИ]
+[17:02:15] [🖼️ ГАЛЕРЕЯ]
+[17:02:17] [📜 ЛОГИ]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+[17:02:18] [🖼️ ГАЛЕРЕЯ]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+[17:02:21] [📜 ЛОГИ]
+[17:02:21] [🖼️ ГАЛЕРЕЯ]
+[17:02:22] [📜 ЛОГИ]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+[17:02:23] [🖼️ ГАЛЕРЕЯ]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+[17:03:29] 🤳 CAM FRONT
