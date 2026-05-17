@@ -1,0 +1,36 @@
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [org.telegram.messenger]
+
+📱 [unknown]
+
+📱 [org.telegram.messenger]
+[15:32:34] Сообщение
+[15:32:34] Сообщение
+
+📱 [com.android.systemui]
+
+📱 [org.telegram.messenger]
+
+📱 [unknown]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [unknown]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [org.telegram.messenger]
+[15:32:35] П
+[15:32:35] П
+[15:32:35] П
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [org.telegram.messenger]
+[15:32:35] Пр
