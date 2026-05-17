@@ -1,0 +1,35 @@
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
+[15:10:23] [📱 ANDROID]
+[15:10:25] 🤳 CAM FRONT
+[15:10:26] [📜 LOGS]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
+[15:12:39] [Домашняя страница]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [unknown]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [unknown]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [com.android.systemui]
+[15:12:41] [Просмотр]
