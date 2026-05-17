@@ -1,0 +1,36 @@
+
+📱 [unknown]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [unknown]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [com.android.systemui]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [com.android.systemui]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [com.android.systemui]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [com.android.systemui]
+
+📱 [com.transsion.XOSLauncher]
+[16:41:43] [SpyMaster Controller]
+
+📱 [unknown]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [com.spymaster.controller]
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
+[16:41:46] [🖼️ ГАЛЕРЕЯ]
