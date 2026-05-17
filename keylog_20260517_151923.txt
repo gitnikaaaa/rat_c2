@@ -1,0 +1,27 @@
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.spymaster.controller]
+[15:19:10] /keylog_send
+[15:19:10] /keylog_send
+[15:19:10] /keylog_send
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.spymaster.controller]
+[15:19:11] 🔧 Введите кастомную команду...
+[15:19:11] 📨 ОТПРАВИТЬ
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.spymaster.controller]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
