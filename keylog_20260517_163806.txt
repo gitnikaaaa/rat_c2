@@ -1,0 +1,72 @@
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
+[16:34:50] [📱 ANDROID]
+[16:34:52] 📸 CAM BACK
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.example.gamesnake]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+[16:35:09] [🖼️ ГАЛЕРЕЯ]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
+[16:38:06] [Домашняя страница]
