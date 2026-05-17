@@ -1,0 +1,37 @@
+
+📱 [com.example.gamesnake]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.example.gamesnake]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+[16:15:43] [🖼️ ГАЛЕРЕЯ]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+[16:15:44] [📜 ЛОГИ]
+[16:15:44] [🖼️ ГАЛЕРЕЯ]
+[16:15:45] [📜 ЛОГИ]
+[16:15:45] [🖼️ ГАЛЕРЕЯ]
