@@ -1,0 +1,30 @@
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [org.telegram.messenger]
+[15:32:38] Привет Я хочу тебя
+[15:32:38] Привет Я хочу тебя
+[15:32:38] Привет Я хочу тебя
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.android.systemui]
+[15:33:21] [Домашняя страница]
+
+📱 [org.telegram.messenger]
+
+📱 [unknown]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
