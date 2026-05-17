@@ -1,0 +1,40 @@
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.google.android.youtube]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [com.android.settings]
+
+📱 [com.google.android.youtube]
+
+📱 [com.transsion.dynamicbar]
+
+📱 [com.android.systemui]
+
+📱 [com.android.settings]
+
+📱 [unknown]
+
+📱 [com.transsion.dynamicbar]
+
+📱 [unknown]
+
+📱 [com.transsion.dynamicbar]
+
+📱 [com.android.systemui]
+
+📱 [com.transsion.dynamicbar]
+
+📱 [com.android.systemui]
+
+📱 [com.android.settings]
