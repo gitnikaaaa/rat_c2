@@ -1,0 +1,41 @@
+
+📱 [com.android.systemui]
+[15:02:52] [Домашняя страница]
+
+📱 [unknown]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [com.android.systemui]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [com.android.settings]
+
+📱 [unknown]
+
+📱 [com.android.settings]
+
+📱 [unknown]
+
+📱 [com.android.settings]
+
+📱 [unknown]
+
+📱 [com.android.settings]
+
+📱 [unknown]
+
+📱 [com.android.settings]
