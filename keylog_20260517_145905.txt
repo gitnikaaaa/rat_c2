@@ -1,0 +1,30 @@
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+[14:59:00] 🔧 Введите кастомную команду...
+[14:59:00] 📨 ОТПРАВИТЬ
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.spymaster.controller]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.settings]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.android.settings]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [com.android.settings]
+
+📱 [com.android.systemui]
