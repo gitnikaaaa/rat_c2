@@ -1,0 +1,52 @@
+
+📱 [ru.sberbank.investor]
+
+📱 [com.transsion.smartpanel]
+
+📱 [com.android.systemui]
+
+📱 [com.transsion.smartpanel]
+
+📱 [unknown]
+
+📱 [ru.sberbank.investor]
+
+📱 [unknown]
+
+📱 [ru.sberbank.investor]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [ru.sberbank.investor]
+
+📱 [unknown]
+
+📱 [ru.sberbank.investor]
+
+📱 [unknown]
+
+📱 [ru.sberbank.investor]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+[17:27:08] [Домашняя страница]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [unknown]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [com.android.systemui]
+[17:33:01] [Просмотр]
