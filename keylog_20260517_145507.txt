@@ -1,0 +1,39 @@
+[14:55:01] [Яндекс Браузер]
+
+📱 [unknown]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [com.transsion.applock]
+
+📱 [unknown]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [com.yandex.browser]
+
+📱 [com.android.systemui]
+
+📱 [com.yandex.browser]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [com.yandex.browser]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.yandex.browser]
+
+📱 [com.android.systemui]
+
+📱 [com.yandex.browser]
+[14:55:07] Введите запрос или адрес
+[14:55:07] Введите запрос или адрес
+
+📱 [android]
+
+📱 [com.yandex.browser]
