@@ -1,0 +1,60 @@
+
+📱 [unknown]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [unknown]
+
+📱 [com.transsion.XOSLauncher]
+[17:25:23] [Pydroid 3]
+
+📱 [ru.iiec.pydroid3]
+
+📱 [com.transsion.smartpanel]
+
+📱 [ru.iiec.pydroid3]
+
+📱 [com.transsion.smartpanel]
+
+📱 [unknown]
+
+📱 [ru.iiec.pydroid3]
+
+📱 [com.transsion.smartpanel]
+
+📱 [ru.iiec.pydroid3]
+
+📱 [com.transsion.smartpanel]
+
+📱 [ru.iiec.pydroid3]
+
+📱 [com.transsion.smartpanel]
+
+📱 [ru.iiec.pydroid3]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [ru.iiec.pydroid3]
+
+📱 [com.android.systemui]
+
+📱 [ru.iiec.pydroid3]
+
+📱 [com.transsion.smartpanel]
+
+📱 [com.android.systemui]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.transsion.smartpanel]
+
+📱 [unknown]
+
+📱 [com.transsion.smartpanel]
+
+📱 [com.android.systemui]
+[17:25:32] [Домашняя страница]
