@@ -1,0 +1,41 @@
+
+📱 [unknown]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [unknown]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [com.android.settings]
+
+📱 [unknown]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.android.settings]
+
+📱 [com.android.systemui]
+
+📱 [com.android.settings]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [unknown]
+
+📱 [com.android.settings]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.android.settings]
+[17:23:02] Удалить
