@@ -1,0 +1,32 @@
+
+📱 [com.android.systemui]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [unknown]
+
+📱 [com.yandex.browser]
+
+📱 [unknown]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.yandex.browser]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.yandex.browser]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.yandex.browser]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.yandex.browser]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.yandex.browser]
+[14:55:08] sbhshdhd
+[14:55:08] sbhshdhd
