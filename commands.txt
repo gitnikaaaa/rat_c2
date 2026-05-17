@@ -1,7 +1,0 @@
-/screenshot
-/sms_recent
-/info
-/screenshot
-/screenshot
-/screenshot
-/info
