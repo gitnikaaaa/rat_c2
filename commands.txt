@@ -1,8 +1,0 @@
-/persist
-/info
-/info
-/persist
-/persist
-/info
-/cash
-/processes
