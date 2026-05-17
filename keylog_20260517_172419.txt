@@ -1,0 +1,36 @@
+[17:24:17] /keyl
+[17:24:17] /keyl
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.spymaster.controller]
+[17:24:17] /keylo
+[17:24:17] /keylo
+[17:24:17] /keylo
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.spymaster.controller]
+[17:24:17] /keylog
+[17:24:17] /keylog
+[17:24:17] /keylog
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [unknown]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.spymaster.controller]
+[17:24:18] /keylog_
+[17:24:18] /keylog_
+[17:24:18] /keylog_
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [unknown]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.spymaster.controller]
+[17:24:19] /keylog_s
