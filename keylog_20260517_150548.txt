@@ -1,0 +1,36 @@
+
+📱 [unknown]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [com.spymaster.controller]
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
+[15:05:46] 🔧 Введите кастомную команду...
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
+[15:05:48] [📱 ANDROID]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
