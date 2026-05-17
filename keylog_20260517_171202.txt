@@ -1,0 +1,36 @@
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+[17:11:59] [📜 ЛОГИ]
+[17:11:59] [🖼️ ГАЛЕРЕЯ]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+[17:11:59] [💻 PC]
+[17:12:00] [📱 ANDROID]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+[17:12:00] [💻 PC]
+[17:12:00] [🖼️ ГАЛЕРЕЯ]
+[17:12:00] [📜 ЛОГИ]
+[17:12:02] [🖼️ ГАЛЕРЕЯ]
+[17:12:02] [💻 PC]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+[17:12:02] [📱 ANDROID]
