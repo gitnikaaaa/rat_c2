@@ -1,0 +1,33 @@
+[15:33:27] /
+[15:33:27] /
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [unknown]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.android.systemui]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [unknown]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.spymaster.controller]
+[15:33:28] /k
+[15:33:28] /k
+[15:33:28] /k
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.spymaster.controller]
+[15:33:28] /ke
+[15:33:28] /ke
+[15:33:28] /ke
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.spymaster.controller]
+[15:33:28] /key
