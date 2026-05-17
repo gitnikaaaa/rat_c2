@@ -1,0 +1,37 @@
+[16:20:23] [📜 ЛОГИ]
+[16:20:23] [🖼️ ГАЛЕРЕЯ]
+[16:20:24] [📱 ANDROID]
+[16:20:26] 🤳 CAM FRONT
+[16:20:27] [📜 ЛОГИ]
+[16:20:27] [🖼️ ГАЛЕРЕЯ]
+[16:20:28] [📜 ЛОГИ]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.example.gamesnake]
+
+📱 [com.android.systemui]
+
+📱 [com.example.gamesnake]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
