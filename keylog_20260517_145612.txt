@@ -1,0 +1,41 @@
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [com.android.systemui]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [com.android.systemui]
+
+📱 [com.transsion.XOSLauncher]
+[14:56:10] [Telegram]
+
+📱 [unknown]
+
+📱 [com.transsion.applock]
+
+📱 [unknown]
+
+📱 [com.transsion.applock]
+
+📱 [unknown]
+
+📱 [org.telegram.messenger]
+
+📱 [unknown]
+
+📱 [org.telegram.messenger]
+
+📱 [unknown]
+
+📱 [org.telegram.messenger]
+
+📱 [com.transsion.smartpanel]
