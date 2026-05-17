@@ -1,0 +1,44 @@
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [android]
+
+📱 [unknown]
+
+📱 [com.android.settings]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [com.android.settings]
+
+📱 [com.android.systemui]
+
+📱 [com.android.settings]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [com.transsion.dynamicbar]
+
+📱 [com.android.systemui]
+
+📱 [com.google.android.youtube]
+
+📱 [unknown]
+
+📱 [com.android.settings]
