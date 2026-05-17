@@ -1,0 +1,40 @@
+
+📱 [com.spymaster.controller]
+[16:10:28] 🤳 CAM FRONT
+[16:10:30] [📜 ЛОГИ]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.example.gamesnake]
+
+📱 [com.android.systemui]
+
+📱 [com.example.gamesnake]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
