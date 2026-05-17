@@ -1,0 +1,38 @@
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+[17:24:52] [🖼️ ГАЛЕРЕЯ]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
+[17:25:19] [Домашняя страница]
