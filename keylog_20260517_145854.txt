@@ -1,0 +1,28 @@
+[14:58:51] keylo
+[14:58:51] keylo
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.spymaster.controller]
+[14:58:51] keylog
+[14:58:51] keylog
+[14:58:51] keylog
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [unknown]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.spymaster.controller]
+[14:58:53] 🔧 Введите кастомную команду...
+[14:58:53] 🔧 Введите кастомную команду...
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [unknown]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.spymaster.controller]
+[14:58:54] l
