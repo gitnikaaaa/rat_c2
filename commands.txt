@@ -1,3 +1,4 @@
 /screenshot
 /sms_recent
 /info
+/screenshot
