@@ -1,0 +1,35 @@
+[15:04:34] Искать приложения
+
+📱 [unknown]
+
+📱 [com.android.settings]
+
+📱 [unknown]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [unknown]
+
+📱 [com.android.settings]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.android.settings]
+[15:04:36] t
+[15:04:36] t
+[15:04:36] t
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.android.settings]
+[15:04:36] to
+[15:04:36] to
+[15:04:36] too
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.android.settings]
