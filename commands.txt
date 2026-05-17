@@ -4,3 +4,4 @@
 /screenshot
 /screenshot
 /screenshot
+/info
