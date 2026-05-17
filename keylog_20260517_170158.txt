@@ -1,0 +1,39 @@
+[16:58:13] [🖼️ ГАЛЕРЕЯ]
+[16:58:14] [📜 ЛОГИ]
+[16:58:14] [🖼️ ГАЛЕРЕЯ]
+[16:58:15] [📜 ЛОГИ]
+[16:58:15] [🖼️ ГАЛЕРЕЯ]
+[16:58:15] [📜 ЛОГИ]
+[16:58:16] [🖼️ ГАЛЕРЕЯ]
+[16:58:16] [📜 ЛОГИ]
+[16:58:16] [🖼️ ГАЛЕРЕЯ]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
+[17:01:38] [Домашняя страница]
+
+📱 [unknown]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [unknown]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [com.android.systemui]
+
+📱 [com.transsion.XOSLauncher]
+[17:01:58] [SpyMaster Controller]
