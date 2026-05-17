@@ -1,0 +1,37 @@
+
+📱 [com.android.settings]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.android.settings]
+
+📱 [unknown]
+
+📱 [com.android.settings]
+
+📱 [unknown]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.android.settings]
+
+📱 [com.android.systemui]
+
+📱 [com.android.settings]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.android.systemui]
+
+📱 [com.android.settings]
+
+📱 [unknown]
+
+📱 [com.android.settings]
+[15:09:17] Удалить
+
+📱 [unknown]
+
+📱 [com.google.android.packageinstaller]
+
+📱 [com.android.settings]
