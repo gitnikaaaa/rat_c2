@@ -1,0 +1,39 @@
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
+
+📱 [com.android.settings]
+
+📱 [unknown]
+
+📱 [com.android.settings]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.android.settings]
+
+📱 [unknown]
+
+📱 [com.android.settings]
+
+📱 [com.android.systemui]
+
+📱 [unknown]
+
+📱 [com.android.settings]
+
+📱 [unknown]
+
+📱 [com.android.settings]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+
+📱 [com.android.settings]
+[14:54:48] [Настройки быстрого запуска]
+
+📱 [unknown]
