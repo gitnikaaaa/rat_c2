@@ -1,0 +1,48 @@
+🔑 KEYLOGGER ACTIVATED
+📱 [com.android.settings]
+
+📱 [unknown]
+
+📱 [com.android.settings]
+
+📱 [com.android.systemui]
+[17:23:34] [Назад]
+
+📱 [com.android.settings]
+
+📱 [unknown]
+
+📱 [com.android.systemui]
+[17:23:35] [Назад]
+
+📱 [com.example.gamesnake]
+
+📱 [unknown]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [unknown]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [unknown]
+
+📱 [com.transsion.XOSLauncher]
+
+📱 [com.example.gamesnake]
+
+📱 [com.transsion.XOSLauncher]
+[17:23:40] [SpyMaster Controller]
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
+
+📱 [unknown]
+
+📱 [com.spymaster.controller]
+
+📱 [com.android.systemui]
+
+📱 [com.spymaster.controller]
+[17:23:42] [💻 PC]
