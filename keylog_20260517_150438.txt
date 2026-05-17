@@ -1,0 +1,36 @@
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.android.settings]
+[15:04:36] too
+[15:04:36] too
+[15:04:36] too
+[15:04:37] tool
+[15:04:37] tool
+[15:04:37] tool
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.android.settings]
+
+📱 [unknown]
+
+📱 [com.android.settings]
+
+📱 [com.google.android.inputmethod.latin]
+
+📱 [com.android.settings]
+
+📱 [com.android.systemui]
+
+📱 [com.android.settings]
+
+📱 [unknown]
+
+📱 [com.android.settings]
+
+📱 [com.android.systemui]
+
+📱 [com.android.settings]
+
+📱 [unknown]
