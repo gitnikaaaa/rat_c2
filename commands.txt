@@ -6,3 +6,4 @@
 /hide_icon
 /show_icon
 /install_system
+/info
