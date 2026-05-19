@@ -1,2 +1,0 @@
-/set_name писька
-/info
