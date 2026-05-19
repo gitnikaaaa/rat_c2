@@ -1,3 +1,4 @@
 /contacts
 /info
 /info
+/info
