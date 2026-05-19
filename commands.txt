@@ -1,4 +1,0 @@
-/contacts
-/info
-/info
-/info
