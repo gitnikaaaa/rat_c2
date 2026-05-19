@@ -4,3 +4,4 @@
 /clip_set писька
 /show_icon
 /hide_icon
+/show_icon
