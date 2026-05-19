@@ -1,0 +1,1 @@
+Contacts error: Permission Denial: opening provider com.android.providers.contacts.ContactsProvider2 from ProcessRecord{7220029 14555:com.example.gamesnake/u0a1698} (pid=14555, uid=11698) requires android.permission.READ_CONTACTS or android.permission.WRITE_CONTACTS
