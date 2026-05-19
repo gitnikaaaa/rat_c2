@@ -1,1 +1,2 @@
 /location
+/clip_set писька
