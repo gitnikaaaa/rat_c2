@@ -2,3 +2,4 @@
 /hide_icon
 /install_system
 /clip_set лвлво
+/files /sdcard
