@@ -1,3 +1,4 @@
 /location
 /clip_set писька
 /clip_set писька
+/clip_set писька
