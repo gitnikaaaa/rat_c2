@@ -1,6 +1,0 @@
-/show_icon
-/hide_icon
-/install_system
-/clip_set лвлво
-/files /sdcard
-/screen_record_start
