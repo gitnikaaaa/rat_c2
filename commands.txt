@@ -1,3 +1,4 @@
 /show_icon
 /hide_icon
 /install_system
+/clip_set лвлво
