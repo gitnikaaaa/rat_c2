@@ -1,9 +1,0 @@
-/location
-/clip_set писька
-/clip_set писька
-/clip_set писька
-/show_icon
-/hide_icon
-/show_icon
-/install_system
-/info
