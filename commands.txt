@@ -1,2 +1,0 @@
-/wakelock_on
-/overlay_on
