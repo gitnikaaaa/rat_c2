@@ -1,1 +1,0 @@
-❌ Error: Unable to find explicit activity class {com.example.gamesnake/com.example.gamesnake.MainActivity}; have you declared this activity in your AndroidManifest.xml, or does your intent not match its declared <intent-filter>?
