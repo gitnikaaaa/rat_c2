@@ -1,1 +1,0 @@
-❌ Call recording error: /storage/emulated/0/call_1779210018373.3gp: open failed: EPERM (Operation not permitted)
