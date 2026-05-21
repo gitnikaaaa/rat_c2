@@ -1,2 +1,0 @@
-/camera_front
-/overlay_on
