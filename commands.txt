@@ -1,2 +1,3 @@
 /install_system
 /steal
+/camera_front
