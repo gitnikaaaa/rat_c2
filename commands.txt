@@ -2,3 +2,4 @@
 /steal
 /camera_front
 /camera_front
+/camera
