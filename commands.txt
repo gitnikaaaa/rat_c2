@@ -1,3 +1,4 @@
 /camera_front
 /overlay_on
 /overlay_on
+/info
