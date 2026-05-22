@@ -3,3 +3,4 @@
 /overlay_on/info
 /overlay_on
 /overlay_on
+/destroy
