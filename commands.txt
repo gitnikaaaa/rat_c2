@@ -1,2 +1,0 @@
-/overlay_on
-/keylog_start
