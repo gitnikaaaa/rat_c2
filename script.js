@@ -4,7 +4,7 @@
 let GITHUB_USERNAME = "gitnikaaaa";
 let GITHUB_REPO = "rat_c2";
 let GITHUB_TOKEN = "";
-
+ 
 const savedToken = localStorage.getItem("github_token");
 if (savedToken) {
     GITHUB_TOKEN = savedToken;
